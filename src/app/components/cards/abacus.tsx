@@ -1,6 +1,6 @@
+/* eslint-disable  no-explicit-any */
 // Copyright (C) Thorsten Thormaehlen, Marburg, 2013, All rights reserved
 // Contact: www.thormae.de
-
 import { useEffect, useRef, useState } from "react";
 
 // This software is written for educational (non-commercial) purpose.
@@ -256,9 +256,7 @@ class Abacus {
       this.abacusCtrl.beadWidth,
       this.abacusCtrl.beadHeight - 4,
       0,
-      nodeId,
-      0,
-      0
+      nodeId
     );
     ctx.fillStyle = "oklch(88.2% 0.059 254.128)";
     if (this.abacusCtrl.nodes[nodeId].active) {

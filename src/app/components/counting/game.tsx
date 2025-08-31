@@ -44,7 +44,7 @@ export function Game(props: Props) {
     const interval =
       tickRef.current === props.terms.length - 1
         ? 5000
-        : props.config.interval * 1000;
+        : props.config.interval;
     timer.start(
       () => {
         timer.stop();

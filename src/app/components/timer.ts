@@ -14,7 +14,6 @@ export class ClassTimer {
       this.remainingTime -= elapsed;
       this.timerId = null;
       this.startTime = null;
-      console.log("Timer paused.");
     }
   }
 

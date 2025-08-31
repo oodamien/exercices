@@ -17,13 +17,9 @@ function generateGame(config: ConfigState) {
   const values = FLASH_COUNTING.filter(
     (value: any) => value.level === +config.difficulty
   );
-  console.log(values, config.difficulty)
   const randomIndex = Math.floor(Math.random() * values.length);
   const value = values[randomIndex];
   const terms: Array<number> = [];
-
-  console.log(value);
-
   (["a", "b", "c", "d"] as Array<keyof typeof value>).forEach((key) => {
     if (value && value.hasOwnProperty(key)) {
       if (Number.isInteger(+value[key])) {
@@ -31,7 +27,6 @@ function generateGame(config: ConfigState) {
       }
     }
   });
-  console.log(terms);
   return terms;
 }
 
@@ -40,7 +35,7 @@ export default function Counting() {
   const [terms, setTerms] = useState<Array<number>>([]);
   const [config, setConfig] = useState<ConfigState>({
     difficulty: "1",
-    interval: 2,
+    interval: 2000,
   });
 
   return (
@@ -70,10 +65,6 @@ export default function Counting() {
                     play={play}
                     terms={terms}
                     onPlay={() => {
-                      // console.log(Generator);
-                      // var generator = Generator.generate(1, 1, 1, 1, [], true);
-                      // console.log(generator.result);
-
                       setTerms(generateGame(config));
                       setPlay(true);
                     }}

@@ -171,7 +171,6 @@ class AbacusCtrl {
   activated(nodeId: any) {
     const line = Math.floor(nodeId / this.beadPerLine);
     const beadInLine = nodeId - line * this.beadPerLine;
-    //console.log(nodeId +" " + line + " " + beadInLine);
 
     const active = this.nodes[nodeId].active;
     this.nodes[nodeId].active = !active;

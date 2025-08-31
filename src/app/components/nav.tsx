@@ -28,7 +28,7 @@ export function Nav(props: Props) {
               : "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
           }`}
       >
-        Counting
+        Flash Counting
       </Link>
       <Link
         href="/cards"

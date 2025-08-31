@@ -1,8 +1,36 @@
 "use client";
 
+import { useState } from "react";
+import { Config, ConfigState } from "@/app/components/cards/config";
 import { Game } from "@/app/components/cards/game";
+import { CARDS } from "../Data";
+
+function generateGame(config: ConfigState) {
+  const values = CARDS.filter(
+    (value: any) => value.level === +config.difficulty
+  );
+  const randomIndex = Math.floor(Math.random() * values.length);
+  const value = values[randomIndex];
+  const terms: Array<number> = [];
+  Object.keys(value).forEach((key) => {
+    if (value && Object.prototype.hasOwnProperty.call(value, key)) {
+      const val: any = (value as Record<string, unknown>)[key];
+      if (val !== "" && Number.isInteger(+val)) {
+        terms.push(+val);
+      }
+    }
+  });
+  return terms;
+}
 
 export default function Cards() {
+  const [play, setPlay] = useState<boolean>(false);
+  const [terms, setTerms] = useState<Array<number>>([]);
+  const [config, setConfig] = useState<ConfigState>({
+    difficulty: "1",
+    interval: 2000,
+  });
+
   return (
     <>
       <header className="bg-white shadow-sm">
@@ -13,11 +41,31 @@ export default function Cards() {
         </div>
       </header>
       <main>
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-6">
           <div className="min-h-full">
-            <main className="flex">
-              <Game />
-            </main>
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-6">
+              <div className="flex flex-row">
+                <div className="basis-1/4 h-full pr-6">
+                  <Config
+                    config={config}
+                    onChange={(state: ConfigState) => {
+                      setConfig(state);
+                    }}
+                  />
+                </div>
+                <div className="basis-3/4 h-grow w-full bg-gray-100">
+                  <Game
+                    play={play}
+                    terms={terms}
+                    onPlay={() => {
+                      setTerms(generateGame(config));
+                      setPlay(true);
+                    }}
+                    config={config}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>

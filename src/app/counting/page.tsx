@@ -5,14 +5,6 @@ import { Config, ConfigState } from "@/app/components/counting/config";
 import { Game } from "@/app/components/counting/game";
 import { FLASH_COUNTING } from "../Data";
 
-function generateNumber() {
-  const number = ~~(Math.random() * 10) - 2;
-  if (number === 0) {
-    return generateNumber();
-  }
-  return number;
-}
-
 function generateGame(config: ConfigState) {
   const values = FLASH_COUNTING.filter(
     (value: any) => value.level === +config.difficulty
@@ -43,7 +35,7 @@ export default function Counting() {
       <header className="bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Counting
+            Flash Counting
           </h1>
         </div>
       </header>

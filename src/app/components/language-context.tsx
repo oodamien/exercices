@@ -54,6 +54,9 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "config.interval": "Intervalle (ms)",
     "config.difficultyAria": "Sélectionner le niveau de difficulté",
     "config.intervalAria": "Intervalle en millisecondes",
+    // Page titles
+    "page.counting.title": "Flash Counting",
+    "page.cards.title": "Boulier",
     // Games common
     "game.newGame": "Nouvelle partie !",
     "game.newGameShort": "Nouvelle partie",
@@ -86,6 +89,9 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "config.interval": "Intervall (ms)",
     "config.difficultyAria": "Schwierigkeitsgrad wählen",
     "config.intervalAria": "Intervall in Millisekunden",
+    // Page titles
+    "page.counting.title": "Flash Counting",
+    "page.cards.title": "Abakus",
     // Games common
     "game.newGame": "Neues Spiel!",
     "game.newGameShort": "Neues Spiel",
@@ -118,6 +124,9 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "config.interval": "Interval (ms)",
     "config.difficultyAria": "Select difficulty level",
     "config.intervalAria": "Interval in milliseconds",
+    // Page titles
+    "page.counting.title": "Flash Counting",
+    "page.cards.title": "Abacus",
     // Games common
     "game.newGame": "New Game!",
     "game.newGameShort": "New Game",

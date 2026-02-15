@@ -5,6 +5,7 @@ import { Config } from "@/app/components/shared-config";
 import { ConfigState, CardItem } from "@/app/types";
 import { Game } from "@/app/components/cards/game";
 import { CARDS, CARDS_CATS } from "../Data";
+import { useTranslation } from "@/app/components/language-context";
 
 function generateGame(config: ConfigState) {
   const values = CARDS.filter(
@@ -25,6 +26,7 @@ function generateGame(config: ConfigState) {
 }
 
 export default function Cards() {
+  const t = useTranslation();
   const [play, setPlay] = useState<boolean>(false);
   const [terms, setTerms] = useState<Array<number>>([]);
   const [config, setConfig] = useState<ConfigState>({
@@ -37,7 +39,7 @@ export default function Cards() {
       <header className="bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Cards
+            {t("page.cards.title")}
           </h1>
         </div>
       </header>

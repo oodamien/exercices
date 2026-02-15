@@ -46,3 +46,18 @@ export interface ConfigProps {
   categories: { level: number; name: string }[];
   onChange: (state: ConfigState) => void;
 }
+
+export type BeadColorScheme = "default" | "black" | "white";
+
+export interface CardsConfigState {
+  difficulty: string;           // "1"-"9" (existing levels)
+  interval: number;             // ms (1000-5000, step 1000)
+  impulses: number;             // 1-10 (flashes per round)
+  rotation: number;             // 0-330 (degrees, step 30)
+  colorScheme: BeadColorScheme; // bead color theme
+}
+
+export interface ScoreState {
+  correct: number;
+  total: number;
+}

@@ -13,20 +13,20 @@ export function Nav({ mobile }: Props) {
   const t = useTranslation();
 
   const links = [
-    { href: "/", label: t("nav.home") },
-    { href: "/counting", label: t("nav.counting") },
-    { href: "/cards", label: t("nav.cards") },
+    { href: "/", label: t("nav.home"), icon: "🏠" },
+    { href: "/counting", label: t("nav.counting"), icon: "⚡" },
+    { href: "/cards", label: t("nav.cards"), icon: "🪐" },
   ];
 
   const baseClass = mobile
-    ? "block rounded-md px-3 py-2 text-base font-medium"
-    : "rounded-md px-3 py-2 text-sm font-medium";
+    ? "flex items-center gap-2 rounded-lg px-3 py-2.5 text-base font-medium transition-all"
+    : "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all";
 
-  const activeClass = "bg-gray-900 text-white";
-  const inactiveClass = "text-gray-300 hover:bg-gray-700 hover:text-white";
+  const activeClass = "bg-sc-bg-tertiary text-sc-gold glow-gold";
+  const inactiveClass = "text-sc-text-dim hover:text-sc-text hover:bg-sc-bg-tertiary/50";
 
   return (
-    <div className={mobile ? "" : "ml-10 flex items-baseline space-x-4"}>
+    <div className={mobile ? "" : "ml-8 flex items-baseline space-x-2"}>
       {links.map((link) => (
         <Link
           key={link.href}
@@ -34,6 +34,7 @@ export function Nav({ mobile }: Props) {
           className={`${baseClass} ${pathname === link.href ? activeClass : inactiveClass}`}
           aria-current={pathname === link.href ? "page" : undefined}
         >
+          <span className="text-base">{link.icon}</span>
           {link.label}
         </Link>
       ))}

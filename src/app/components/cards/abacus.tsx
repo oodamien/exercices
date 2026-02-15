@@ -1,10 +1,26 @@
 // Copyright (C) Thorsten Thormaehlen, Marburg, 2013, All rights reserved
 // Contact: www.thormae.de
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { BeadColorScheme } from "@/app/types";
 
 // This software is written for educational (non-commercial) purpose.
 // There is no warranty or other guarantee of fitness for this software,
 // it is provided solely "as is".
+
+const BEAD_COLORS: Record<BeadColorScheme, { inactive: string; active: string }> = {
+  default: {
+    inactive: "oklch(88.2% 0.059 254.128)",
+    active: "oklch(70.7% 0.165 254.624)",
+  },
+  black: {
+    inactive: "#888888",
+    active: "#222222",
+  },
+  white: {
+    inactive: "#e8e8e8",
+    active: "#bbbbbb",
+  },
+};
 
 class UIElement {
   x: number;
@@ -219,13 +235,17 @@ class Abacus {
   divId: HTMLElement | null;
   uiElements: UIElement[];
   value: string;
+  rotation: number;
+  colorScheme: BeadColorScheme;
 
-  constructor(parentDivId: HTMLElement | null, value: string) {
+  constructor(parentDivId: HTMLElement | null, value: string, rotation: number = 0, colorScheme: BeadColorScheme = "default") {
     this.abacusCtrl = new AbacusCtrl(value);
     this.divId = parentDivId;
     this.uiElements = [];
     this.canvas = null;
     this.value = `${+value}`;
+    this.rotation = rotation;
+    this.colorScheme = colorScheme;
   }
 
   init() {
@@ -236,12 +256,26 @@ class Abacus {
       return;
     }
     this.canvas.id = (this.divId?.id ?? "") + "_Abacus";
-    this.canvas.width = this.abacusCtrl.beadLines * this.abacusCtrl.beadSpacing;
-    this.canvas.height =
+
+    const baseWidth = this.abacusCtrl.beadLines * this.abacusCtrl.beadSpacing;
+    const baseHeight =
       25 + (this.abacusCtrl.beadPerLine + 2) * this.abacusCtrl.beadHeight;
-    if (this.divId && this.divId.children.length == 0) {
-      this.divId.appendChild(this.canvas);
+
+    if (this.rotation !== 0) {
+      const radians = (this.rotation * Math.PI) / 180;
+      const cos = Math.abs(Math.cos(radians));
+      const sin = Math.abs(Math.sin(radians));
+      const newWidth = Math.ceil(baseWidth * cos + baseHeight * sin);
+      const newHeight = Math.ceil(baseWidth * sin + baseHeight * cos);
+      this.canvas.width = newWidth;
+      this.canvas.height = newHeight;
     } else {
+      this.canvas.width = baseWidth;
+      this.canvas.height = baseHeight;
+    }
+
+    if (this.divId) {
+      this.divId.appendChild(this.canvas);
     }
     this.update();
   }
@@ -258,9 +292,10 @@ class Abacus {
       0,
       nodeId
     );
-    ctx.fillStyle = "oklch(88.2% 0.059 254.128)";
+    const colors = BEAD_COLORS[this.colorScheme];
+    ctx.fillStyle = colors.inactive;
     if (this.abacusCtrl.nodes[nodeId].active) {
-      ctx.fillStyle = "oklch(70.7% 0.165 254.624)";
+      ctx.fillStyle = colors.active;
     }
     this.drawRoundRectFilled(ctx, dn.x, dn.y, dn.x2 - dn.x, dn.y2 - dn.y, 12);
     ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
@@ -276,10 +311,31 @@ class Abacus {
 
   update() {
     if (!this.canvas) return;
-    this.canvas.width = this.canvas.width;
     const ctx = this.canvas.getContext("2d");
     if (!ctx) return;
+
+    // Clear canvas properly
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.uiElements.length = 0;
+
+    ctx.save();
+
+    if (this.rotation !== 0) {
+      const cx = this.canvas.width / 2;
+      const cy = this.canvas.height / 2;
+      ctx.translate(cx, cy);
+      ctx.rotate((this.rotation * Math.PI) / 180);
+      ctx.translate(-cx, -cy);
+
+      // Offset drawing origin so abacus is centered in the larger canvas
+      const baseWidth = this.abacusCtrl.beadLines * this.abacusCtrl.beadSpacing;
+      const baseHeight =
+        25 + (this.abacusCtrl.beadPerLine + 2) * this.abacusCtrl.beadHeight;
+      const offsetX = (this.canvas.width - baseWidth) / 2;
+      const offsetY = (this.canvas.height - baseHeight) / 2;
+      ctx.translate(offsetX, offsetY);
+    }
+
     ctx.strokeStyle = "#888888";
     // draw frame
     ctx.lineWidth = 1;
@@ -304,13 +360,15 @@ class Abacus {
     ctx.beginPath();
     ctx.setLineDash([]);
     ctx.moveTo(0, ycalc);
-    ctx.lineTo(640, ycalc);
+    ctx.lineTo(this.abacusCtrl.beadLines * this.abacusCtrl.beadSpacing, ycalc);
     ctx.stroke();
 
     ctx.lineWidth = 1;
 
     // draws all nodes
     this.drawBeads(ctx);
+
+    ctx.restore();
   }
 
   drawRoundRectFilled(
@@ -346,18 +404,19 @@ class Abacus {
 interface Props {
   value: string;
   classNames?: string;
+  rotation?: number;
+  colorScheme?: BeadColorScheme;
 }
 
 export default function AbacusGame(props: Props) {
-  const [abacus, setAbacus] = useState<Abacus | null>(null);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!abacus && ref.current) {
-      const abacus = new Abacus(ref.current, props.value);
-      setAbacus(abacus);
-      abacus.init();
+    if (ref.current) {
+      ref.current.innerHTML = "";  // clear previous canvas
+      const ab = new Abacus(ref.current, props.value, props.rotation ?? 0, props.colorScheme ?? "default");
+      ab.init();
     }
-  }, [abacus]);
+  }, [props.value, props.rotation, props.colorScheme]);
   return (
     <div className={props?.classNames}>
       <div ref={ref}></div>

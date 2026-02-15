@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Config, ConfigState } from "@/app/components/cards/config";
+import { Config } from "@/app/components/shared-config";
+import { ConfigState } from "@/app/types";
 import { Game } from "@/app/components/cards/game";
-import { CARDS } from "../Data";
+import { CARDS, CARDS_CATS } from "../Data";
 
 function generateGame(config: ConfigState) {
   const values = CARDS.filter(
@@ -48,6 +49,7 @@ export default function Cards() {
                 <div className="basis-1/4 h-full pr-6">
                   <Config
                     config={config}
+                    categories={CARDS_CATS}
                     onChange={(state: ConfigState) => {
                       setConfig(state);
                     }}

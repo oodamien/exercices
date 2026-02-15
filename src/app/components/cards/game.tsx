@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ConfigState } from "./config";
+import { ConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
 import AbacusGame from "./abacus";
 

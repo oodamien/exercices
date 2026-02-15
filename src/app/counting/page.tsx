@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Config, ConfigState } from "@/app/components/counting/config";
+import { Config } from "@/app/components/shared-config";
+import { ConfigState } from "@/app/types";
 import { Game } from "@/app/components/counting/game";
-import { FLASH_COUNTING } from "../Data";
+import { FLASH_COUNTING, FLASH_COUNTING_CATS } from "../Data";
 
 function generateGame(config: ConfigState) {
   const values = FLASH_COUNTING.filter(
@@ -47,6 +48,7 @@ export default function Counting() {
                 <div className="basis-1/4 h-full pr-6">
                   <Config
                     config={config}
+                    categories={FLASH_COUNTING_CATS}
                     onChange={(state: ConfigState) => {
                       setConfig(state);
                     }}

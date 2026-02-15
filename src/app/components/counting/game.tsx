@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
+import { useLanguage } from "@/app/components/language-context";
 
 interface Props {
   play: boolean;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function Game(props: Props) {
+  const { language } = useLanguage();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [tick, setTick] = useState<number>(-1);
   const [result, setResult] = useState<number>(0);
@@ -84,7 +86,7 @@ export function Game(props: Props) {
     if (textRead && props.play) {
       const synth = window.speechSynthesis;
       const u = new SpeechSynthesisUtterance(`${textRead}`);
-      u.lang = "de-DE";
+      u.lang = language;
       synth.speak(u);
       return () => {
         synth.cancel();

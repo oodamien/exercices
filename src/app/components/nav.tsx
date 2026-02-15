@@ -1,43 +1,40 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname  } from "next/navigation";
+import { usePathname } from "next/navigation";
 
-export function Nav() {
-  const pathname = usePathname ();
+interface Props {
+  mobile?: boolean;
+}
+
+const links = [
+  { href: "/", label: "Accueil" },
+  { href: "/counting", label: "Flash Counting" },
+  { href: "/cards", label: "Boulier" },
+];
+
+export function Nav({ mobile }: Props) {
+  const pathname = usePathname();
+
+  const baseClass = mobile
+    ? "block rounded-md px-3 py-2 text-base font-medium"
+    : "rounded-md px-3 py-2 text-sm font-medium";
+
+  const activeClass = "bg-gray-900 text-white";
+  const inactiveClass = "text-gray-300 hover:bg-gray-700 hover:text-white";
+
   return (
-    <div className="ml-10 flex items-baseline space-x-4">
-      <Link
-        href="/"
-        className={`${
-          pathname == "/"
-            ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-            : "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-        }`}
-        aria-current="page"
-      >
-        Dashboard
-      </Link>
-      <Link
-        href="/counting"
-        className={`${
-            pathname == "/counting"
-              ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-              : "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-          }`}
-      >
-        Flash Counting
-      </Link>
-      <Link
-        href="/cards"
-        className={`${
-            pathname == "/cards"
-              ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-              : "rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-          }`}
-      >
-        Cards
-      </Link>
+    <div className={mobile ? "" : "ml-10 flex items-baseline space-x-4"}>
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          className={`${baseClass} ${pathname === link.href ? activeClass : inactiveClass}`}
+          aria-current={pathname === link.href ? "page" : undefined}
+        >
+          {link.label}
+        </Link>
+      ))}
     </div>
   );
 }

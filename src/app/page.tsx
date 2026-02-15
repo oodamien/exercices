@@ -2,57 +2,49 @@
 
 import Link from "next/link";
 
+const games = [
+  {
+    href: "/counting",
+    title: "Flash Counting",
+    description: "Compte les nombres le plus vite possible !",
+    emoji: "🔢",
+    gradient: "from-green-400 to-emerald-500",
+  },
+  {
+    href: "/cards",
+    title: "Boulier",
+    description: "Lis les nombres sur le boulier !",
+    emoji: "🧮",
+    gradient: "from-orange-400 to-amber-500",
+  },
+];
+
 export default function Home() {
   return (
-    <>
-      <header className="bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Dashboard
-          </h1>
-        </div>
-      </header>
-      <main>
-        <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-          <div className="w-full">
-            <ul
-              role="list"
-              className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+    <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-indigo-50 to-purple-50">
+      <div className="mx-auto max-w-4xl px-4 py-12">
+        <h1 className="text-center text-4xl md:text-5xl font-bold text-indigo-900 mb-2">
+          Mes Jeux de Calcul
+        </h1>
+        <p className="text-center text-lg text-indigo-600 mb-12">
+          Choisis un jeu pour commencer !
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          {games.map((game) => (
+            <Link
+              key={game.href}
+              href={game.href}
+              className={`group block rounded-2xl bg-gradient-to-br ${game.gradient} p-8 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200`}
             >
-              <li>
-                <Link href={"/counting"} className="col-span-1 flex rounded-md shadow-xs">
-                  <div className="bg-green-500 flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white">
-                    CO
-                  </div>
-                  <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-800/50">
-                    <div className="flex-1 truncate px-4 py-2 text-sm">
-                      <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
-                        Flash Counting
-                      </span>
-                      <p className="text-gray-500 dark:text-gray-400">Count numbers</p>
-                    </div>
-                  </div>
-                </Link>
-              </li>
-              <li>
-                <Link href={"/cards"} className="col-span-1 flex rounded-md shadow-xs">
-                  <div className="bg-orange-500 flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white">
-                    CA
-                  </div>
-                  <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-800/50">
-                    <div className="flex-1 truncate px-4 py-2 text-sm">
-                      <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
-                        Cards
-                      </span>
-                      <p className="text-gray-500 dark:text-gray-400">Play with abacus</p>
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            </ul>
-          </div>
+              <div className="text-6xl mb-4">{game.emoji}</div>
+              <h2 className="text-2xl font-bold text-white mb-2">
+                {game.title}
+              </h2>
+              <p className="text-white/90 text-lg">{game.description}</p>
+            </Link>
+          ))}
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }

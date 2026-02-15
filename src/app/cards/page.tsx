@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { Config } from "@/app/components/shared-config";
-import { ConfigState } from "@/app/types";
+import { ConfigState, CardItem } from "@/app/types";
 import { Game } from "@/app/components/cards/game";
 import { CARDS, CARDS_CATS } from "../Data";
 
 function generateGame(config: ConfigState) {
   const values = CARDS.filter(
-    (value: any) => value.level === +config.difficulty
+    (value: CardItem) => value.level === +config.difficulty
   );
   const randomIndex = Math.floor(Math.random() * values.length);
   const value = values[randomIndex];
   const terms: Array<number> = [];
   Object.keys(value).forEach((key) => {
     if (value && Object.prototype.hasOwnProperty.call(value, key)) {
-      const val: any = (value as Record<string, unknown>)[key];
+      const val: string | number = (value as CardItem)[key];
       if (val !== "" && Number.isInteger(+val)) {
         terms.push(+val);
       }

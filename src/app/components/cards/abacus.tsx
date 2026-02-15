@@ -250,7 +250,7 @@ class Abacus {
     const nodePosX = this.abacusCtrl.getBeadPositionX(nodeId);
     const nodePosY = this.abacusCtrl.getBeadPositionY(nodeId);
 
-    let dn: UIElement = new UIElement(
+    const dn: UIElement = new UIElement(
       nodePosX,
       nodePosY + 2,
       this.abacusCtrl.beadWidth,

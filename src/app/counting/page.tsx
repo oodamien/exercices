@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Config } from "@/app/components/shared-config";
-import { ConfigState } from "@/app/types";
+import { ConfigState, FlashCountingItem } from "@/app/types";
 import { Game } from "@/app/components/counting/game";
 import { FLASH_COUNTING, FLASH_COUNTING_CATS } from "../Data";
 
 function generateGame(config: ConfigState) {
   const values = FLASH_COUNTING.filter(
-    (value: any) => value.level === +config.difficulty
+    (value: FlashCountingItem) => value.level === +config.difficulty
   );
   const randomIndex = Math.floor(Math.random() * values.length);
   const value = values[randomIndex];

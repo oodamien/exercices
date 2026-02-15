@@ -3,9 +3,7 @@
 import Link from "next/link";
 import { usePathname  } from "next/navigation";
 
-interface Props {}
-
-export function Nav(props: Props) {
+export function Nav() {
   const pathname = usePathname ();
   return (
     <div className="ml-10 flex items-baseline space-x-4">

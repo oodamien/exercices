@@ -7,7 +7,7 @@ import { ClassTimer } from "../timer";
 interface Props {
   play: boolean;
   terms: Array<number>;
-  onPlay: Function;
+  onPlay: () => void;
   config: ConfigState;
 }
 
@@ -112,7 +112,7 @@ export function Game(props: Props) {
       {!isPlaying && (
         <button
           onClick={() => {
-            props?.onPlay();
+            props.onPlay();
           }}
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
@@ -157,7 +157,7 @@ export function Game(props: Props) {
                         setPause(false);
                         setTick(-1);
                         timer.stop();
-                        props?.onPlay();
+                        props.onPlay();
                       }}
                       type="submit"
                       className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ml-4"
@@ -213,7 +213,7 @@ export function Game(props: Props) {
                         setIsPlaying(false);
                         setTick(-1);
                         timer.stop();
-                        props?.onPlay();
+                        props.onPlay();
                       }}
                       type="submit"
                       className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

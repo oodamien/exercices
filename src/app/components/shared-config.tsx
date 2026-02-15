@@ -6,18 +6,18 @@ import { useTranslation } from "@/app/components/language-context";
 export function Config({ config, categories, onChange }: ConfigProps) {
   const t = useTranslation();
   return (
-    <div className="font-[family-name:var(--font-geist-sans)]">
+    <div className="bg-sc-bg-secondary rounded-2xl p-5 border border-sc-cyan/10">
       <form>
         <div className="space-y-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
-              {t("config.title")}
+            <h2 className="text-lg font-[family-name:var(--font-fredoka)] text-sc-text flex items-center gap-2">
+              📡 {t("config.title")}
             </h2>
 
             <div className="mt-4">
               <label
                 htmlFor="difficulty"
-                className="block text-sm font-medium text-gray-900"
+                className="block text-sm font-medium text-sc-text-dim"
               >
                 {t("config.difficulty")}
               </label>
@@ -30,7 +30,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                     onChange({ ...config, difficulty: e.target.value });
                   }}
                   aria-label={t("config.difficultyAria")}
-                  className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                  className="col-start-1 row-start-1 w-full appearance-none rounded-lg bg-sc-bg-tertiary py-2 pr-8 pl-3 text-base text-sc-text border border-sc-cyan/20 focus:outline-2 focus:outline-sc-cyan"
                 >
                   {categories.map((cat) => (
                     <option key={cat.level} value={cat.level}>
@@ -39,7 +39,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                   ))}
                 </select>
                 <svg
-                  className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+                  className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-sc-text-dim sm:size-4"
                   viewBox="0 0 16 16"
                   fill="currentColor"
                   aria-hidden="true"
@@ -56,7 +56,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
             <div className="mt-4">
               <label
                 htmlFor="interval"
-                className="block text-sm font-medium text-gray-900"
+                className="block text-sm font-medium text-sc-text-dim"
               >
                 {t("config.interval")}
               </label>
@@ -74,7 +74,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                   }}
                   defaultValue={config?.interval}
                   aria-label={t("config.intervalAria")}
-                  className="block w-28 rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                  className="block w-28 rounded-lg bg-sc-bg-tertiary px-3 py-2 text-base text-sc-text border border-sc-cyan/20 placeholder:text-sc-text-dim/50 focus:outline-2 focus:outline-sc-cyan"
                 />
               </div>
             </div>

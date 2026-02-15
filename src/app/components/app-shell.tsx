@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Nav } from "@/app/components/nav";
 import { LanguageProvider, LanguageSelector } from "@/app/components/language-context";
 import { Rocket } from "@/app/components/icons/rocket";
@@ -19,12 +20,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
-                <a href="/" className="flex items-center gap-2 group">
+                <Link href="/" className="flex items-center gap-2 group">
                   <Rocket className="w-7 h-7 group-hover:animate-float" />
                   <span className="font-[family-name:var(--font-fredoka)] text-xl font-bold text-sc-gold text-glow-gold">
                     StarCalc
                   </span>
-                </a>
+                </Link>
                 <div className="hidden md:block">
                   <Nav />
                 </div>

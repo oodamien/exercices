@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ConfigState } from "@/app/types";
+import { CountingConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
 
@@ -9,7 +9,7 @@ interface Props {
   play: boolean;
   terms: Array<number>;
   onPlay: () => void;
-  config: ConfigState;
+  config: CountingConfigState;
 }
 
 export function Game(props: Props) {
@@ -110,7 +110,7 @@ export function Game(props: Props) {
     <div
       className={`${
         pause ? "paused" : "play"
-      } media h-full relative w-full bg-gray-100 flex justify-center items-center`}
+      } media h-full relative w-full bg-transparent flex justify-center items-center`}
     >
       {!isPlaying && (
         <button
@@ -118,7 +118,7 @@ export function Game(props: Props) {
             props.onPlay();
           }}
           type="submit"
-          className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+          className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
           {t("game.newGame")}
         </button>
@@ -135,7 +135,7 @@ export function Game(props: Props) {
                       setPause(true);
                     }}
                     type="submit"
-                    className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                    className="rounded-xl bg-sc-cyan/20 px-6 py-3 text-base font-bold text-sc-cyan border border-sc-cyan/30 shadow-lg hover:bg-sc-cyan/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
                     {t("counting.pause")}
                   </button>
@@ -150,7 +150,7 @@ export function Game(props: Props) {
                         }, 100);
                       }}
                       type="submit"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                      className="rounded-xl bg-sc-cyan/20 px-6 py-3 text-base font-bold text-sc-cyan border border-sc-cyan/30 shadow-lg hover:bg-sc-cyan/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
                       {t("counting.resume")}
                     </button>
@@ -163,7 +163,7 @@ export function Game(props: Props) {
                         props.onPlay();
                       }}
                       type="submit"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer ml-4"
+                      className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer ml-4"
                     >
                       {t("game.newGameShort")}
                     </button>
@@ -173,7 +173,7 @@ export function Game(props: Props) {
             </div>
           )}
           {tick === -1 && (
-            <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
+            <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
               {t("game.ready")}
             </p>
           )}
@@ -182,12 +182,12 @@ export function Game(props: Props) {
               {tick > -1 && (
                 <div>
                   {tick > -1 && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
                       {props.terms[tick]}
                     </div>
                   )}
                   {tick === props.terms.length && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
                       ?
                     </div>
                   )}
@@ -195,8 +195,8 @@ export function Game(props: Props) {
               )}
               {tick === props.terms.length + 1 && (
                 <div className="flex justify-center items-center flex-col animate-bounce-in">
-                  <div className="text-xl">{props.terms.join(" + ")}</div>
-                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+                  <div className="text-xl text-sc-text-dim">{props.terms.join(" + ")}</div>
+                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
                     {result}
                   </div>
                   <div className="flex gap-4 pt-6">
@@ -207,7 +207,7 @@ export function Game(props: Props) {
                         next();
                       }}
                       type="submit"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                      className="rounded-xl bg-sc-cyan/20 px-6 py-3 text-base font-bold text-sc-cyan border border-sc-cyan/30 shadow-lg hover:bg-sc-cyan/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
                       {t("game.replay")}
                     </button>
@@ -219,7 +219,7 @@ export function Game(props: Props) {
                         props.onPlay();
                       }}
                       type="submit"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                      className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
                       {t("game.newGameShort")}
                     </button>

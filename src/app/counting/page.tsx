@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Config } from "@/app/components/shared-config";
-import { ConfigState, FlashCountingItem } from "@/app/types";
+import { CountingConfigState, FlashCountingItem } from "@/app/types";
 import { Game } from "@/app/components/counting/game";
+import { CountingConfig } from "@/app/components/counting/counting-config";
 import { FLASH_COUNTING, FLASH_COUNTING_CATS } from "../Data";
 import { useTranslation } from "@/app/components/language-context";
 
-function generateGame(config: ConfigState) {
+function generateGame(config: CountingConfigState) {
   const values = FLASH_COUNTING.filter(
     (value: FlashCountingItem) => value.level === +config.difficulty
   );
@@ -28,32 +28,39 @@ export default function Counting() {
   const t = useTranslation();
   const [play, setPlay] = useState<boolean>(false);
   const [terms, setTerms] = useState<Array<number>>([]);
-  const [config, setConfig] = useState<ConfigState>({
+  const [config, setConfig] = useState<CountingConfigState>({
     difficulty: "1",
     interval: 2000,
+    operation: "+",
+    terms: 4,
+    pauseTime: 500,
+    fontSize: 120,
+    lineHeight: 200,
+    showSeparator: false,
+    showSymbols: false,
   });
 
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="border-b border-sc-cyan/10">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            {t("page.counting.title")}
+          <h1 className="font-[family-name:var(--font-fredoka)] text-3xl font-bold text-sc-cyan text-glow-cyan">
+            ⚡ {t("page.counting.title")}
           </h1>
         </div>
       </header>
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/4">
-            <Config
+            <CountingConfig
               config={config}
               categories={FLASH_COUNTING_CATS}
-              onChange={(state: ConfigState) => {
+              onChange={(state: CountingConfigState) => {
                 setConfig(state);
               }}
             />
           </div>
-          <div className="w-full md:w-3/4 min-h-[400px] bg-gray-100 rounded-xl">
+          <div className="w-full md:w-3/4 min-h-[400px] nebula-bg rounded-2xl">
             <Game
               play={play}
               terms={terms}

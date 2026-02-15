@@ -40,10 +40,10 @@ export default function Cards() {
 
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="border-b border-sc-orange/10">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            {t("page.cards.title")}
+          <h1 className="font-[family-name:var(--font-fredoka)] text-3xl font-bold text-sc-orange text-glow-gold">
+            🪐 {t("page.cards.title")}
           </h1>
         </div>
       </header>
@@ -58,7 +58,7 @@ export default function Cards() {
               }}
             />
           </div>
-          <div className="w-full md:w-3/4 min-h-[400px] bg-gray-100 rounded-xl">
+          <div className="w-full md:w-3/4 min-h-[400px] nebula-bg rounded-2xl">
             <Game
               play={play}
               terms={terms}

@@ -61,3 +61,17 @@ export interface ScoreState {
   correct: number;
   total: number;
 }
+
+export type CountingOperation = "+" | "-" | "+-";
+
+export interface CountingConfigState {
+  difficulty: string;
+  interval: number;
+  operation: CountingOperation;
+  terms: number;
+  pauseTime: number;
+  fontSize: number;
+  lineHeight: number;
+  showSeparator: boolean;
+  showSymbols: boolean;
+}

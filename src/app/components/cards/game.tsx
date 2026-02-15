@@ -214,13 +214,13 @@ export function Game(props: Props) {
   }
 
   return (
-    <div className="play media h-full relative w-full bg-gray-100 flex justify-center items-center rounded-xl">
+    <div className="play media h-full relative w-full bg-transparent flex justify-center items-center rounded-2xl">
       {/* Score overlay */}
       {isPlaying && (
-        <div className="absolute top-3 right-3 bg-white/80 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-700">
+        <div className="absolute top-3 right-3 bg-sc-bg-secondary/80 backdrop-blur-sm rounded-lg px-3 py-1.5 text-sm font-semibold text-sc-text">
           {t("cards.score")}: {props.score.correct}/{props.score.total}
           {props.score.total > 0 && (
-            <span className="ml-1 text-gray-500">
+            <span className="ml-1 text-sc-text-dim">
               ({Math.round((props.score.correct / props.score.total) * 100)}%)
             </span>
           )}
@@ -232,7 +232,7 @@ export function Game(props: Props) {
         <button
           onClick={() => props.onPlay()}
           type="button"
-          className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+          className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
           {t("game.newGame")}
         </button>
@@ -274,24 +274,24 @@ export function Game(props: Props) {
                   autoFocus
                   onChange={(e) => setVal(e.target.value)}
                   value={val}
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                  className="block w-full rounded-lg bg-sc-bg-tertiary px-3 py-2 text-base text-sc-text border border-sc-orange/20 placeholder:text-sc-text-dim/50 focus:outline-2 focus:outline-sc-orange sm:text-sm"
                 />
                 {error && (
-                  <div className="pt-2 text-orange-500">
+                  <div className="pt-2 text-sc-red">
                     {t("cards.tryAgain")}
                   </div>
                 )}
                 <div className="flex gap-3 pt-3">
                   <button
                     type="submit"
-                    className="rounded-xl bg-green-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                    className="rounded-xl bg-sc-gold px-6 py-3 text-base font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
                     {t("cards.submit")}
                   </button>
                   <button
                     type="button"
                     onClick={handleAnew}
-                    className="rounded-xl bg-blue-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-blue-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                    className="rounded-xl bg-sc-cyan/20 px-6 py-3 text-base font-bold text-sc-cyan border border-sc-cyan/30 shadow-lg hover:bg-sc-cyan/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
                     {t("cards.anew")}
                   </button>
@@ -303,27 +303,27 @@ export function Game(props: Props) {
           {/* COMPLETE phase */}
           {phase === "complete" && (
             <div className="block text-center animate-bounce-in">
-              <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+              <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
                 {t("cards.bravo")}
               </div>
-              <div className="text-xl pt-2">
+              <div className="text-xl pt-2 text-sc-text">
                 {t("cards.score")}: {props.score.correct}/{props.score.total}
               </div>
-              <div className="text-lg pt-1 text-gray-500">
+              <div className="text-lg pt-1 text-sc-text-dim">
                 {props.terms.join(", ")}
               </div>
               <div className="flex gap-4 pt-6 items-center justify-center">
                 <button
                   onClick={handleReplay}
                   type="button"
-                  className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                  className="rounded-xl bg-sc-cyan/20 px-6 py-3 text-base font-bold text-sc-cyan border border-sc-cyan/30 shadow-lg hover:bg-sc-cyan/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                   {t("game.replay")}
                 </button>
                 <button
                   onClick={handleNewGame}
                   type="button"
-                  className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                  className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
                   {t("game.newGameShort")}
                 </button>

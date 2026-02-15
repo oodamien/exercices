@@ -1,194 +1,334 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ConfigState } from "@/app/types";
-import { ClassTimer } from "../timer";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { CardsConfigState, ScoreState } from "@/app/types";
 import AbacusGame from "./abacus";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
+
+type Phase = "ready" | "flashing" | "answering" | "complete";
 
 interface Props {
   play: boolean;
   terms: Array<number>;
   onPlay: () => void;
-  config: ConfigState;
+  config: CardsConfigState;
+  score: ScoreState;
+  onScoreUpdate: (score: ScoreState) => void;
 }
 
 export function Game(props: Props) {
   const { language } = useLanguage();
   const t = useTranslation();
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [tick, setTick] = useState<number>(-1);
-  const [blink, setBlink] = useState<boolean>(false);
-  const tickRef = useRef(-1);
-  const [timer] = useState<ClassTimer>(new ClassTimer());
-  const [response, setResponse] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
-  const [val, setVal] = useState<string>("");
 
-  // Reset all variables
-  useEffect(() => {
-    if (!props.play) {
-      setIsPlaying(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [phase, setPhase] = useState<Phase>("ready");
+  const [round, setRound] = useState(0);
+  const [flashIndex, setFlashIndex] = useState(0);
+  const [showAbacus, setShowAbacus] = useState(false);
+  const [error, setError] = useState(false);
+  const [val, setVal] = useState("");
+  const [firstAttempt, setFirstAttempt] = useState(true);
+  const timerRef = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Split terms into rounds based on impulses
+  const rounds = useMemo(() => {
+    const result: number[][] = [];
+    const imp = props.config.impulses;
+    for (let i = 0; i < props.terms.length; i += imp) {
+      result.push(props.terms.slice(i, i + imp));
     }
-  }, [props.play]);
+    return result;
+  }, [props.terms, props.config.impulses]);
 
-  useEffect(() => {
-    tickRef.current = tick;
-  }, [tick]);
-
-  const next = (noBlink = false) => {
-    setBlink(true);
-    timer.start(
-      () => {
-        timer.stop();
-        setBlink(false);
-        timer.start(() => {
-          timer.stop();
-          if (tickRef.current === -1) {
-            setTick((tick) => tick + 1);
-          }
-          if (tickRef.current < props.terms.length) {
-            timer.start(() => {
-              timer.stop();
-              setResponse(true);
-            }, props.config.interval);
-          }
-        }, props.config.interval);
-      },
-      noBlink ? 0 : 100
-    );
-  };
-
-  useEffect(() => {
-    let textRead = "";
-    if (tick === -1) {
-      textRead = t("game.readyVoice");
+  // Timer helpers
+  const clearTimeoutIfNeeded = useCallback(() => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
     }
+  }, []);
 
-    if (textRead && props.play) {
+  const scheduleTimeout = useCallback(
+    (callback: () => void, ms: number) => {
+      clearTimeoutIfNeeded();
+      timerRef.current = window.setTimeout(callback, ms);
+    },
+    [clearTimeoutIfNeeded]
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => clearTimeoutIfNeeded();
+  }, [clearTimeoutIfNeeded]);
+
+  // Speech synthesis
+  const speakText = useCallback(
+    (text: string) => {
       const synth = window.speechSynthesis;
-      const u = new SpeechSynthesisUtterance(`${textRead}`);
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(text);
       u.lang = language;
       synth.speak(u);
-      return () => {
-        synth.cancel();
-      };
-    }
-  }, [tick, props.terms, props.play]);
+    },
+    [language]
+  );
 
+  // Reset when play changes from parent
   useEffect(() => {
     if (props.play && !isPlaying) {
       setIsPlaying(true);
-      next();
-    }
-  }, [props.play, isPlaying]);
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(false);
-    const value = props.terms[tick];
-    setError(value !== Number(val));
-    if (value === Number(val)) {
-      setTick((tick) => tick + 1);
-      setResponse(false);
+      setRound(0);
+      setFlashIndex(0);
+      setPhase("ready");
       setError(false);
       setVal("");
-      next();
+      setFirstAttempt(true);
+    }
+    if (!props.play) {
+      setIsPlaying(false);
+      clearTimeoutIfNeeded();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.play]);
+
+  // READY phase: show "Pret..." then start flashing
+  useEffect(() => {
+    if (isPlaying && phase === "ready") {
+      speakText(t("game.readyVoice"));
+      scheduleTimeout(() => {
+        setPhase("flashing");
+        setFlashIndex(0);
+        setShowAbacus(true);
+      }, 1500);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, phase]);
+
+  // FLASHING phase: show abacus for interval, blank between flashes
+  useEffect(() => {
+    if (phase !== "flashing" || !isPlaying) return;
+    if (rounds.length === 0 || round >= rounds.length) return;
+
+    if (showAbacus) {
+      // Abacus is visible - wait for interval then hide
+      scheduleTimeout(() => {
+        setShowAbacus(false);
+      }, props.config.interval);
+    } else {
+      // Brief blank between flashes
+      const nextIndex = flashIndex + 1;
+      if (nextIndex < rounds[round].length) {
+        // More flashes in this round
+        scheduleTimeout(() => {
+          setFlashIndex(nextIndex);
+          setShowAbacus(true);
+        }, 200);
+      } else {
+        // All flashes done - go to answering
+        scheduleTimeout(() => {
+          setPhase("answering");
+          setFirstAttempt(true);
+          setError(false);
+          setVal("");
+        }, 200);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, flashIndex, showAbacus]);
+
+  // Auto-focus input when entering answering phase
+  useEffect(() => {
+    if (phase === "answering") {
+      // Small delay to let React render the input first
+      const id = window.setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(id);
+    }
+  }, [phase]);
+
+  // Submit answer
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const currentRound = rounds[round];
+    const expected =
+      props.config.impulses === 1
+        ? currentRound[0]
+        : currentRound.reduce((sum, n) => sum + n, 0);
+
+    if (Number(val) === expected) {
+      // Correct!
+      const newScore: ScoreState = {
+        correct: firstAttempt
+          ? props.score.correct + 1
+          : props.score.correct,
+        total: props.score.total + 1,
+      };
+      props.onScoreUpdate(newScore);
+
+      // Move to next round or complete
+      const nextRound = round + 1;
+      if (nextRound < rounds.length) {
+        setRound(nextRound);
+        setFlashIndex(0);
+        setShowAbacus(true);
+        setPhase("flashing");
+        setError(false);
+        setVal("");
+      } else {
+        setPhase("complete");
+      }
+    } else {
+      // Wrong
+      setError(true);
+      setFirstAttempt(false);
     }
   }
 
+  // Anew: replay current round flashes
+  function handleAnew() {
+    setFlashIndex(0);
+    setShowAbacus(true);
+    setPhase("flashing");
+    setError(false);
+    setVal("");
+  }
+
+  // Replay: same terms, reset rounds
+  function handleReplay() {
+    setRound(0);
+    setFlashIndex(0);
+    setShowAbacus(false);
+    setPhase("ready");
+    setError(false);
+    setVal("");
+    setFirstAttempt(true);
+  }
+
+  // New game: generate new terms
+  function handleNewGame() {
+    setIsPlaying(false);
+    clearTimeoutIfNeeded();
+    props.onPlay();
+  }
+
   return (
-    <div
-      className={`play media h-full relative w-full bg-gray-100 flex justify-center items-center`}
-    >
+    <div className="play media h-full relative w-full bg-gray-100 flex justify-center items-center rounded-xl">
+      {/* Score overlay */}
+      {isPlaying && (
+        <div className="absolute top-3 right-3 bg-white/80 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-700">
+          {t("cards.score")}: {props.score.correct}/{props.score.total}
+          {props.score.total > 0 && (
+            <span className="ml-1 text-gray-500">
+              ({Math.round((props.score.correct / props.score.total) * 100)}%)
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* IDLE: New Game button */}
       {!isPlaying && (
         <button
-          onClick={() => {
-            props.onPlay();
-          }}
-          type="submit"
+          onClick={() => props.onPlay()}
+          type="button"
           className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
           {t("game.newGame")}
         </button>
       )}
+
       {isPlaying && (
         <>
-          {tick === -1 && (
+          {/* READY phase */}
+          {phase === "ready" && (
             <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
               {t("game.ready")}
             </p>
           )}
-          {!blink && (
+
+          {/* FLASHING phase */}
+          {phase === "flashing" && (
             <>
-              {tick > -1 && (
-                <div>
-                  {tick > -1 && tick < props.terms.length && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
-                      {!response ? (
-                        <>
-                          <AbacusGame value={`${props.terms[tick]}`} />
-                        </>
-                      ) : (
-                        <div className="text-sm font-[family-name:var(--font-chakra-petch)]">
-                          <form onSubmit={handleSubmit}>
-                            <input
-                              id="result"
-                              name="result"
-                              type="text"
-                              placeholder={t("cards.placeholder")}
-                              autoFocus
-                              onChange={(e) => setVal(e.target.value)}
-                              value={val}
-                              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
-                            />
-                            {error && (
-                              <>
-                                <div className="pt-2 text-orange-500">
-                                  {t("cards.tryAgain")}
-                                </div>
-                              </>
-                            )}
-                          </form>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-              {tick === props.terms.length && (
-                <div className="block text-center animate-bounce-in">
-                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
-                    {t("cards.bravo")}
-                  </div>
-                  <div className="text-xl pt-3">{props.terms.join(", ")}</div>
-                  <div className="flex gap-4 pt-6 items-center justify-center">
-                    <button
-                      onClick={() => {
-                        setTick(-1);
-                        next();
-                      }}
-                      type="button"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
-                    >
-                      {t("game.replay")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsPlaying(false);
-                        setTick(-1);
-                        timer.stop();
-                        props.onPlay();
-                      }}
-                      type="button"
-                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
-                    >
-                      {t("game.newGameShort")}
-                    </button>
-                  </div>
-                </div>
+              {showAbacus && rounds[round] && (
+                <AbacusGame
+                  value={`${rounds[round][flashIndex]}`}
+                  rotation={props.config.rotation}
+                  colorScheme={props.config.colorScheme}
+                />
               )}
             </>
+          )}
+
+          {/* ANSWERING phase */}
+          {phase === "answering" && (
+            <div className="text-sm font-[family-name:var(--font-chakra-petch)]">
+              <form onSubmit={handleSubmit}>
+                <input
+                  ref={inputRef}
+                  id="result"
+                  name="result"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder={t("cards.placeholder")}
+                  autoFocus
+                  onChange={(e) => setVal(e.target.value)}
+                  value={val}
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                />
+                {error && (
+                  <div className="pt-2 text-orange-500">
+                    {t("cards.tryAgain")}
+                  </div>
+                )}
+                <div className="flex gap-3 pt-3">
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-green-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                  >
+                    {t("cards.submit")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAnew}
+                    className="rounded-xl bg-blue-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-blue-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                  >
+                    {t("cards.anew")}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* COMPLETE phase */}
+          {phase === "complete" && (
+            <div className="block text-center animate-bounce-in">
+              <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+                {t("cards.bravo")}
+              </div>
+              <div className="text-xl pt-2">
+                {t("cards.score")}: {props.score.correct}/{props.score.total}
+              </div>
+              <div className="text-lg pt-1 text-gray-500">
+                {props.terms.join(", ")}
+              </div>
+              <div className="flex gap-4 pt-6 items-center justify-center">
+                <button
+                  onClick={handleReplay}
+                  type="button"
+                  className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                >
+                  {t("game.replay")}
+                </button>
+                <button
+                  onClick={handleNewGame}
+                  type="button"
+                  className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
+                >
+                  {t("game.newGameShort")}
+                </button>
+              </div>
+            </div>
           )}
         </>
       )}

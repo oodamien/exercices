@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Config } from "@/app/components/shared-config";
-import { ConfigState, CardItem } from "@/app/types";
+import { CardsConfigState, ScoreState, CardItem } from "@/app/types";
 import { Game } from "@/app/components/cards/game";
+import { CardsConfig } from "@/app/components/cards/cards-config";
 import { CARDS, CARDS_CATS } from "../Data";
 import { useTranslation } from "@/app/components/language-context";
 
-function generateGame(config: ConfigState) {
+function generateGame(config: CardsConfigState) {
   const values = CARDS.filter(
     (value: CardItem) => value.level === +config.difficulty
   );
@@ -29,9 +29,13 @@ export default function Cards() {
   const t = useTranslation();
   const [play, setPlay] = useState<boolean>(false);
   const [terms, setTerms] = useState<Array<number>>([]);
-  const [config, setConfig] = useState<ConfigState>({
+  const [score, setScore] = useState<ScoreState>({ correct: 0, total: 0 });
+  const [config, setConfig] = useState<CardsConfigState>({
     difficulty: "1",
     interval: 2000,
+    impulses: 1,
+    rotation: 0,
+    colorScheme: "default",
   });
 
   return (
@@ -46,10 +50,10 @@ export default function Cards() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/4">
-            <Config
+            <CardsConfig
               config={config}
               categories={CARDS_CATS}
-              onChange={(state: ConfigState) => {
+              onChange={(state: CardsConfigState) => {
                 setConfig(state);
               }}
             />
@@ -60,9 +64,12 @@ export default function Cards() {
               terms={terms}
               onPlay={() => {
                 setTerms(generateGame(config));
+                setScore({ correct: 0, total: 0 });
                 setPlay(true);
               }}
               config={config}
+              score={score}
+              onScoreUpdate={setScore}
             />
           </div>
         </div>

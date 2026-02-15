@@ -12,8 +12,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
       <div className="min-h-screen relative">
-        {/* Starfield background */}
-        <div className="starfield" />
+        {/* Starfield background — 4 layers of stars */}
+        <div className="starfield">
+          <div className="stars-bright" />
+          <div className="stars-sparkle" />
+        </div>
 
         {/* Nav */}
         <nav className="relative z-10 border-b border-sc-cyan/10">

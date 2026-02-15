@@ -1,4 +1,3 @@
-/* eslint-disable  no-explicit-any */
 // Copyright (C) Thorsten Thormaehlen, Marburg, 2013, All rights reserved
 // Contact: www.thormae.de
 import { useEffect, useRef, useState } from "react";
@@ -8,20 +7,22 @@ import { useEffect, useRef, useState } from "react";
 // it is provided solely "as is".
 
 class UIElement {
-  x: any;
-  y: any;
-  x2: any;
-  y2: any;
-  width: any;
-  height: any;
-  type: any;
-  ref: any;
-  subref: any;
-  slotType: any;
+  x: number;
+  y: number;
+  x2: number;
+  y2: number;
+  width: number;
+  height: number;
+  type: number;
+  ref: number;
+  subref: number;
+  slotType: number | undefined;
 
-  constructor(x: any, y: any, width: any, height: any, type: any, ref: any) {
+  constructor(x: number, y: number, width: number, height: number, type: number, ref: number) {
     this.x = x;
     this.y = y;
+    this.width = width;
+    this.height = height;
     this.x2 = x + width;
     this.y2 = y + height;
     this.type = type; // 0 = node, 1 = slot, 2 connection
@@ -31,10 +32,10 @@ class UIElement {
 }
 
 class Bead {
-  position: any;
-  value: any;
-  active: any;
-  uniqueID: any;
+  position: [number, number];
+  value: number;
+  active: boolean;
+  uniqueID: number;
 
   constructor() {
     this.position = [0.0, 0.0];
@@ -45,24 +46,24 @@ class Bead {
 }
 
 class AbacusCtrl {
-  type: any;
-  beadLines: any;
-  beadPerLine: any;
-  beadSep: any;
-  beadHeight: any;
-  beadSpacing: any;
-  beadWidth: any;
-  nodes: any;
+  type: number | undefined;
+  beadLines: number;
+  beadPerLine: number;
+  beadSep: number;
+  beadHeight: number;
+  beadSpacing: number;
+  beadWidth: number;
+  nodes: Bead[];
   value: string;
 
-  constructor(value: any) {
+  constructor(value: string) {
     this.beadLines = value.length;
     this.beadPerLine = 5;
     this.beadSep = 3;
     this.beadHeight = 40;
     this.beadSpacing = 80;
     this.beadWidth = 60;
-    this.nodes = new Array();
+    this.nodes = [];
     this.value = value;
   }
 
@@ -118,8 +119,8 @@ class AbacusCtrl {
 
   updateValues() {
     const vals = this.value.split("").reverse();
-    for (var i = 0; i < vals.length; i++) {
-      var v = vals[i];
+    for (let i = 0; i < vals.length; i++) {
+      const v = vals[i];
       switch (v) {
         case "1":
           this.activated(this.nodes[(i + 1) * 5 - 2].uniqueID);
@@ -160,15 +161,15 @@ class AbacusCtrl {
     return this.nodes.length;
   }
 
-  getBeadPositionX(nodeId: any) {
+  getBeadPositionX(nodeId: number) {
     return this.nodes[nodeId].position[0];
   }
 
-  getBeadPositionY(nodeId: any): any {
+  getBeadPositionY(nodeId: number): number {
     return this.nodes[nodeId].position[1];
   }
 
-  activated(nodeId: any) {
+  activated(nodeId: number) {
     const line = Math.floor(nodeId / this.beadPerLine);
     const beadInLine = nodeId - line * this.beadPerLine;
 
@@ -197,8 +198,8 @@ class AbacusCtrl {
         }
       }
     } else {
-      for (var j = 0; j < this.beadPerLine; j++) {
-        var n = line * this.beadPerLine + j;
+      for (let j = 0; j < this.beadPerLine; j++) {
+        const n = line * this.beadPerLine + j;
         if (j > this.beadSep && j !== beadInLine) {
           if ((!active && j < beadInLine) || (active && j > beadInLine)) {
             if (this.nodes[n].active === active) {
@@ -214,27 +215,27 @@ class AbacusCtrl {
 
 class Abacus {
   abacusCtrl: AbacusCtrl;
-  canvas: any;
-  divId: any;
-  uiElements: any;
-  that: any;
+  canvas: HTMLCanvasElement | null;
+  divId: HTMLElement | null;
+  uiElements: UIElement[];
   value: string;
 
-  constructor(parentDivId: any, value: string) {
+  constructor(parentDivId: HTMLElement | null, value: string) {
     this.abacusCtrl = new AbacusCtrl(value);
     this.divId = parentDivId;
-    this.uiElements = new Array();
-    this.that = this;
+    this.uiElements = [];
+    this.canvas = null;
     this.value = `${+value}`;
   }
 
   init() {
     this.abacusCtrl.init();
     this.canvas = document.createElement("canvas");
-    const that = this;
-    if (!this.canvas)
-      console.log("Abacus error: can not create a canvas element");
-    this.canvas.id = this.divId + "_Abacus";
+    if (!this.canvas) {
+      console.error("Abacus error: can not create a canvas element");
+      return;
+    }
+    this.canvas.id = (this.divId?.id ?? "") + "_Abacus";
     this.canvas.width = this.abacusCtrl.beadLines * this.abacusCtrl.beadSpacing;
     this.canvas.height =
       25 + (this.abacusCtrl.beadPerLine + 2) * this.abacusCtrl.beadHeight;
@@ -245,7 +246,7 @@ class Abacus {
     this.update();
   }
 
-  drawBead(nodeId: number, ctx: any) {
+  drawBead(nodeId: number, ctx: CanvasRenderingContext2D) {
     const nodePosX = this.abacusCtrl.getBeadPositionX(nodeId);
     const nodePosY = this.abacusCtrl.getBeadPositionY(nodeId);
 
@@ -266,16 +267,18 @@ class Abacus {
     this.uiElements.push(dn);
   }
 
-  drawBeads(ctx: any) {
-    var count = this.abacusCtrl.getBeadsCount();
-    for (var i = 0; i < count; i++) {
+  drawBeads(ctx: CanvasRenderingContext2D) {
+    const count = this.abacusCtrl.getBeadsCount();
+    for (let i = 0; i < count; i++) {
       this.drawBead(i, ctx);
     }
   }
 
   update() {
+    if (!this.canvas) return;
     this.canvas.width = this.canvas.width;
     const ctx = this.canvas.getContext("2d");
+    if (!ctx) return;
     this.uiElements.length = 0;
     ctx.strokeStyle = "#888888";
     // draw frame
@@ -311,12 +314,12 @@ class Abacus {
   }
 
   drawRoundRectFilled(
-    ctx: any,
-    x: any,
-    y: any,
-    width: any,
-    height: any,
-    radius: any
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    radius: number
   ) {
     const lineWidthBackup = ctx.lineWidth;
     const strokeStyleBackup = ctx.strokeStyle;
@@ -346,7 +349,7 @@ interface Props {
 }
 
 export default function AbacusGame(props: Props) {
-  const [abacus, setAbacus] = useState<any>(null);
+  const [abacus, setAbacus] = useState<Abacus | null>(null);
   const ref = useRef(null);
   useEffect(() => {
     if (!abacus && ref.current) {

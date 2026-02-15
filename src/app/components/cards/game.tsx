@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
 import AbacusGame from "./abacus";
-import { useLanguage } from "@/app/components/language-context";
+import { useLanguage, useTranslation } from "@/app/components/language-context";
 
 interface Props {
   play: boolean;
@@ -15,6 +15,7 @@ interface Props {
 
 export function Game(props: Props) {
   const { language } = useLanguage();
+  const t = useTranslation();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [tick, setTick] = useState<number>(-1);
   const [blink, setBlink] = useState<boolean>(false);
@@ -61,7 +62,7 @@ export function Game(props: Props) {
   useEffect(() => {
     let textRead = "";
     if (tick === -1) {
-      textRead = `Prêt`;
+      textRead = t("game.readyVoice");
     }
 
     if (textRead && props.play) {
@@ -108,14 +109,14 @@ export function Game(props: Props) {
           type="submit"
           className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
-          Nouvelle partie !
+          {t("game.newGame")}
         </button>
       )}
       {isPlaying && (
         <>
           {tick === -1 && (
             <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
-              Prêt...
+              {t("game.ready")}
             </p>
           )}
           {!blink && (
@@ -135,7 +136,7 @@ export function Game(props: Props) {
                               id="result"
                               name="result"
                               type="text"
-                              placeholder="Ta réponse"
+                              placeholder={t("cards.placeholder")}
                               autoFocus
                               onChange={(e) => setVal(e.target.value)}
                               value={val}
@@ -144,7 +145,7 @@ export function Game(props: Props) {
                             {error && (
                               <>
                                 <div className="pt-2 text-orange-500">
-                                  Essaie encore !
+                                  {t("cards.tryAgain")}
                                 </div>
                               </>
                             )}
@@ -158,7 +159,7 @@ export function Game(props: Props) {
               {tick === props.terms.length && (
                 <div className="block text-center animate-bounce-in">
                   <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
-                    Bravo ! ⭐
+                    {t("cards.bravo")}
                   </div>
                   <div className="text-xl pt-3">{props.terms.join(", ")}</div>
                   <div className="flex gap-4 pt-6 items-center justify-center">
@@ -170,7 +171,7 @@ export function Game(props: Props) {
                       type="button"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Rejouer 🔄
+                      {t("game.replay")}
                     </button>
                     <button
                       onClick={() => {
@@ -182,7 +183,7 @@ export function Game(props: Props) {
                       type="button"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Nouvelle partie
+                      {t("game.newGameShort")}
                     </button>
                   </div>
                 </div>

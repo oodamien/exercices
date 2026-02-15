@@ -1,13 +1,17 @@
+"use client";
+
 import { ConfigProps } from "@/app/types";
+import { useTranslation } from "@/app/components/language-context";
 
 export function Config({ config, categories, onChange }: ConfigProps) {
+  const t = useTranslation();
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <form>
         <div className="space-y-4">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
-              Configuration
+              {t("config.title")}
             </h2>
 
             <div className="mt-4">
@@ -15,7 +19,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                 htmlFor="difficulty"
                 className="block text-sm font-medium text-gray-900"
               >
-                Niveau
+                {t("config.difficulty")}
               </label>
               <div className="mt-2 grid grid-cols-1">
                 <select
@@ -25,7 +29,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                   onChange={(e) => {
                     onChange({ ...config, difficulty: e.target.value });
                   }}
-                  aria-label="Sélectionner le niveau de difficulté"
+                  aria-label={t("config.difficultyAria")}
                   className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                 >
                   {categories.map((cat) => (
@@ -54,7 +58,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                 htmlFor="interval"
                 className="block text-sm font-medium text-gray-900"
               >
-                Intervalle (ms)
+                {t("config.interval")}
               </label>
               <div className="mt-2">
                 <input
@@ -69,7 +73,7 @@ export function Config({ config, categories, onChange }: ConfigProps) {
                     onChange({ ...config, interval: val });
                   }}
                   defaultValue={config?.interval}
-                  aria-label="Intervalle en millisecondes"
+                  aria-label={t("config.intervalAria")}
                   className="block w-28 rounded-md bg-white px-3 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                 />
               </div>

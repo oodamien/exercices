@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "@/app/components/language-context";
 
 interface Props {
   mobile?: boolean;
 }
 
-const links = [
-  { href: "/", label: "Accueil" },
-  { href: "/counting", label: "Flash Counting" },
-  { href: "/cards", label: "Boulier" },
-];
-
 export function Nav({ mobile }: Props) {
   const pathname = usePathname();
+  const t = useTranslation();
+
+  const links = [
+    { href: "/", label: t("nav.home") },
+    { href: "/counting", label: t("nav.counting") },
+    { href: "/cards", label: t("nav.cards") },
+  ];
 
   const baseClass = mobile
     ? "block rounded-md px-3 py-2 text-base font-medium"

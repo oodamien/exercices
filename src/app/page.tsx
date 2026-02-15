@@ -1,33 +1,36 @@
 "use client";
 
 import Link from "next/link";
-
-const games = [
-  {
-    href: "/counting",
-    title: "Flash Counting",
-    description: "Compte les nombres le plus vite possible !",
-    emoji: "🔢",
-    gradient: "from-green-400 to-emerald-500",
-  },
-  {
-    href: "/cards",
-    title: "Boulier",
-    description: "Lis les nombres sur le boulier !",
-    emoji: "🧮",
-    gradient: "from-orange-400 to-amber-500",
-  },
-];
+import { useTranslation } from "@/app/components/language-context";
 
 export default function Home() {
+  const t = useTranslation();
+
+  const games = [
+    {
+      href: "/counting",
+      title: t("home.counting.title"),
+      description: t("home.counting.description"),
+      emoji: "🔢",
+      gradient: "from-green-400 to-emerald-500",
+    },
+    {
+      href: "/cards",
+      title: t("home.cards.title"),
+      description: t("home.cards.description"),
+      emoji: "🧮",
+      gradient: "from-orange-400 to-amber-500",
+    },
+  ];
+
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-indigo-50 to-purple-50">
       <div className="mx-auto max-w-4xl px-4 py-12">
         <h1 className="text-center text-4xl md:text-5xl font-bold text-indigo-900 mb-2">
-          Mes Jeux de Calcul
+          {t("home.title")}
         </h1>
         <p className="text-center text-lg text-indigo-600 mb-12">
-          Choisis un jeu pour commencer !
+          {t("home.subtitle")}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {games.map((game) => (

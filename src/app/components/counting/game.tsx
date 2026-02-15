@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
-import { useLanguage } from "@/app/components/language-context";
+import { useLanguage, useTranslation } from "@/app/components/language-context";
 
 interface Props {
   play: boolean;
@@ -14,6 +14,7 @@ interface Props {
 
 export function Game(props: Props) {
   const { language } = useLanguage();
+  const t = useTranslation();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [tick, setTick] = useState<number>(-1);
   const [result, setResult] = useState<number>(0);
@@ -74,7 +75,7 @@ export function Game(props: Props) {
   useEffect(() => {
     let textRead = "";
     if (tick === -1) {
-      textRead = `Prêt`;
+      textRead = t("game.readyVoice");
     }
     if (tick > -1 && tick <= props.terms.length - 1) {
       textRead = `${props.terms[tick]}`;
@@ -119,7 +120,7 @@ export function Game(props: Props) {
           type="submit"
           className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
-          Nouvelle partie !
+          {t("game.newGame")}
         </button>
       )}
       {isPlaying && (
@@ -136,7 +137,7 @@ export function Game(props: Props) {
                     type="submit"
                     className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
-                    Pause ⏸
+                    {t("counting.pause")}
                   </button>
                 ) : (
                   <>
@@ -151,7 +152,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Reprendre ▶
+                      {t("counting.resume")}
                     </button>
                     <button
                       onClick={() => {
@@ -164,7 +165,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer ml-4"
                     >
-                      Nouvelle partie
+                      {t("game.newGameShort")}
                     </button>
                   </>
                 )}
@@ -173,7 +174,7 @@ export function Game(props: Props) {
           )}
           {tick === -1 && (
             <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
-              Prêt...
+              {t("game.ready")}
             </p>
           )}
           {!blink && (
@@ -208,7 +209,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Rejouer 🔄
+                      {t("game.replay")}
                     </button>
                     <button
                       onClick={() => {
@@ -220,7 +221,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Nouvelle partie
+                      {t("game.newGameShort")}
                     </button>
                   </div>
                 </div>

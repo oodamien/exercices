@@ -61,7 +61,7 @@ export function Game(props: Props) {
   useEffect(() => {
     let textRead = "";
     if (tick === -1) {
-      textRead = `Ready`;
+      textRead = `Prêt`;
     }
 
     if (textRead && props.play) {
@@ -106,16 +106,16 @@ export function Game(props: Props) {
             props.onPlay();
           }}
           type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+          className="rounded-xl bg-green-500 px-8 py-4 text-lg font-bold text-white shadow-lg hover:bg-green-400 hover:scale-105 transition-all duration-200 cursor-pointer"
         >
-          Start a New Game
+          Nouvelle partie !
         </button>
       )}
       {isPlaying && (
         <>
           {tick === -1 && (
             <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
-              Ready...
+              Prêt...
             </p>
           )}
           {!blink && (
@@ -135,7 +135,7 @@ export function Game(props: Props) {
                               id="result"
                               name="result"
                               type="text"
-                              placeholder="Result"
+                              placeholder="Ta réponse"
                               autoFocus
                               onChange={(e) => setVal(e.target.value)}
                               value={val}
@@ -143,8 +143,8 @@ export function Game(props: Props) {
                             />
                             {error && (
                               <>
-                                <div className="pt-2 text-red-500">
-                                  Wrong answer
+                                <div className="pt-2 text-orange-500">
+                                  Essaie encore !
                                 </div>
                               </>
                             )}
@@ -156,13 +156,9 @@ export function Game(props: Props) {
                 </div>
               )}
               {tick === props.terms.length && (
-                <div className="block text-center">
-                  <div>
-                    {tick === props.terms.length && (
-                      <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
-                        Bravo!
-                      </div>
-                    )}
+                <div className="block text-center animate-bounce-in">
+                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)]">
+                    Bravo ! ⭐
                   </div>
                   <div className="text-xl pt-3">{props.terms.join(", ")}</div>
                   <div className="flex gap-4 pt-6 items-center justify-center">
@@ -172,9 +168,9 @@ export function Game(props: Props) {
                         next();
                       }}
                       type="button"
-                      className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      Replay
+                      Rejouer 🔄
                     </button>
                     <button
                       onClick={() => {
@@ -184,9 +180,9 @@ export function Game(props: Props) {
                         props.onPlay();
                       }}
                       type="button"
-                      className="rounded-md bg-indigo-600 px-3 py-2 px-6 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer"
+                      className="rounded-xl bg-orange-500 px-6 py-3 text-base font-bold text-white shadow-lg hover:bg-orange-400 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
-                      New Game
+                      Nouvelle partie
                     </button>
                   </div>
                 </div>

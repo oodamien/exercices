@@ -41,36 +41,30 @@ export default function Cards() {
           </h1>
         </div>
       </header>
-      <main>
-        <div className="mx-auto max-w-7xl px-4 py-6">
-          <div className="min-h-full">
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-6">
-              <div className="flex flex-row">
-                <div className="basis-1/4 h-full pr-6">
-                  <Config
-                    config={config}
-                    categories={CARDS_CATS}
-                    onChange={(state: ConfigState) => {
-                      setConfig(state);
-                    }}
-                  />
-                </div>
-                <div className="basis-3/4 h-grow w-full bg-gray-100">
-                  <Game
-                    play={play}
-                    terms={terms}
-                    onPlay={() => {
-                      setTerms(generateGame(config));
-                      setPlay(true);
-                    }}
-                    config={config}
-                  />
-                </div>
-              </div>
-            </div>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-1/4">
+            <Config
+              config={config}
+              categories={CARDS_CATS}
+              onChange={(state: ConfigState) => {
+                setConfig(state);
+              }}
+            />
+          </div>
+          <div className="w-full md:w-3/4 min-h-[400px] bg-gray-100 rounded-xl">
+            <Game
+              play={play}
+              terms={terms}
+              onPlay={() => {
+                setTerms(generateGame(config));
+                setPlay(true);
+              }}
+              config={config}
+            />
           </div>
         </div>
-      </main>
+      </div>
     </>
   );
 }

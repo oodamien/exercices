@@ -115,6 +115,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "cards.score": "Score",
     "cards.anew": "Revoir 👁",
     "cards.submit": "Valider ✓",
+    "cards.success": "Bravo !",
+    "cards.next": "Suivant ▶",
   },
   "de-DE": {
     // Home page
@@ -195,6 +197,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "cards.score": "Punkte",
     "cards.anew": "Nochmal 👁",
     "cards.submit": "Bestätigen ✓",
+    "cards.success": "Bravo!",
+    "cards.next": "Weiter ▶",
   },
   "en-US": {
     // Home page
@@ -275,6 +279,8 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "cards.score": "Score",
     "cards.anew": "Replay 👁",
     "cards.submit": "Submit ✓",
+    "cards.success": "Well done!",
+    "cards.next": "Next ▶",
   },
 };
 

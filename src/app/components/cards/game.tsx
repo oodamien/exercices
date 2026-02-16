@@ -5,7 +5,7 @@ import { CardsConfigState, ScoreState } from "@/app/types";
 import AbacusGame from "./abacus";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
 
-type Phase = "ready" | "flashing" | "answering" | "complete";
+type Phase = "ready" | "flashing" | "answering" | "success" | "complete";
 
 interface Props {
   play: boolean;
@@ -165,34 +165,40 @@ export function Game(props: Props) {
         total: props.score.total + 1,
       };
       props.onScoreUpdate(newScore);
-
-      const nextAnswerIndex = answerIndex + 1;
-      if (nextAnswerIndex < currentRound.length) {
-        // More numbers to answer in this round
-        setAnswerIndex(nextAnswerIndex);
-        setVal("");
-        setError(false);
-        setFirstAttempt(true);
-      } else {
-        // All numbers in this round answered — move to next round or complete
-        const nextRound = round + 1;
-        if (nextRound < rounds.length) {
-          setRound(nextRound);
-          setAnswerIndex(0);
-          setFlashIndex(0);
-          setShowAbacus(true);
-          setPhase("flashing");
-          setError(false);
-          setVal("");
-          setFirstAttempt(true);
-        } else {
-          setPhase("complete");
-        }
-      }
+      setPhase("success");
     } else {
       // Wrong
       setError(true);
       setFirstAttempt(false);
+    }
+  }
+
+  // Advance after success screen
+  function handleNext() {
+    const currentRound = rounds[round];
+    const nextAnswerIndex = answerIndex + 1;
+    if (nextAnswerIndex < currentRound.length) {
+      // More numbers to answer in this round
+      setAnswerIndex(nextAnswerIndex);
+      setVal("");
+      setError(false);
+      setFirstAttempt(true);
+      setPhase("answering");
+    } else {
+      // All numbers in this round answered — move to next round or complete
+      const nextRound = round + 1;
+      if (nextRound < rounds.length) {
+        setRound(nextRound);
+        setAnswerIndex(0);
+        setFlashIndex(0);
+        setShowAbacus(true);
+        setPhase("flashing");
+        setError(false);
+        setVal("");
+        setFirstAttempt(true);
+      } else {
+        setPhase("complete");
+      }
     }
   }
 
@@ -317,6 +323,24 @@ export function Game(props: Props) {
                   </button>
                 </div>
               </form>
+            </div>
+          )}
+
+          {/* SUCCESS phase */}
+          {phase === "success" && (
+            <div className="block text-center animate-bounce-in">
+              <div className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
+                {t("cards.success")}
+              </div>
+              <div className="pt-6">
+                <button
+                  onClick={handleNext}
+                  type="button"
+                  className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
+                >
+                  {t("cards.next")}
+                </button>
+              </div>
             </div>
           )}
 

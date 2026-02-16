@@ -289,6 +289,7 @@ export function Game(props: Props) {
                   name="result"
                   type="text"
                   inputMode="numeric"
+                  autoComplete="off"
                   placeholder={t("cards.placeholder")}
                   autoFocus
                   onChange={(e) => setVal(e.target.value)}

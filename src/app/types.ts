@@ -2,7 +2,7 @@
 
 export type SupportedLanguage = "fr-FR" | "de-DE" | "en-US";
 
-export type BeadColorScheme = "default" | "black" | "white";
+export type BeadColorScheme = "default" | "standard";
 
 export type CountingOperation = "+" | "-" | "+-";
 
@@ -19,9 +19,9 @@ export interface CountingConfigState {
 }
 
 export interface CardsConfigState {
-  difficulty: number;       // 1-10 slider
-  interval: number;
-  impulses: number;
+  level: number;            // 1-9
+  interval: number;         // milliseconds (100-15000, step 250)
+  impulses: number;         // 1-6
   rotation: number;
   colorScheme: BeadColorScheme;
 }

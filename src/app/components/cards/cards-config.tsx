@@ -33,7 +33,7 @@ function Stepper({
       >
         ◀
       </button>
-      <span className="min-w-[70px] text-center font-mono text-sm text-sc-text">
+      <span className="min-w-[160px] text-center font-mono text-sm text-sc-text">
         {format(value)}
       </span>
       <button
@@ -48,15 +48,14 @@ function Stepper({
   );
 }
 
-const COLOR_OPTIONS: BeadColorScheme[] = ["default", "black", "white"];
+const COLOR_OPTIONS: BeadColorScheme[] = ["default", "standard"];
 
 export function CardsConfig({ config, onChange }: CardsConfigProps) {
   const t = useTranslation();
 
   const colorLabelKey: Record<BeadColorScheme, string> = {
     default: "cards.config.color.default",
-    black: "cards.config.color.black",
-    white: "cards.config.color.white",
+    standard: "cards.config.color.standard",
   };
 
   return (
@@ -67,19 +66,19 @@ export function CardsConfig({ config, onChange }: CardsConfigProps) {
             📡 {t("config.title")}
           </h2>
 
-          {/* Difficulty stepper */}
+          {/* Level stepper */}
           <div>
             <label className="block text-sm font-medium text-sc-text-dim">
               {t("cards.config.difficulty")}
             </label>
             <div className="mt-2">
               <Stepper
-                value={config.difficulty}
+                value={config.level}
                 min={1}
-                max={10}
+                max={9}
                 step={1}
-                format={(v) => String(v)}
-                onChange={(difficulty) => onChange({ ...config, difficulty })}
+                format={(v) => t(`cards.config.level.${v}`)}
+                onChange={(level) => onChange({ ...config, level })}
                 ariaLabel={t("cards.config.difficulty")}
               />
             </div>
@@ -89,7 +88,7 @@ export function CardsConfig({ config, onChange }: CardsConfigProps) {
           <div>
             <label className="block text-sm font-medium text-sc-text-dim">{t("cards.config.impulses")}</label>
             <div className="mt-2">
-              <Stepper value={config.impulses} min={1} max={10} step={1} format={(v) => String(v)} onChange={(impulses) => onChange({ ...config, impulses })} ariaLabel={t("cards.config.impulses")} />
+              <Stepper value={config.impulses} min={1} max={6} step={1} format={(v) => String(v)} onChange={(impulses) => onChange({ ...config, impulses })} ariaLabel={t("cards.config.impulses")} />
             </div>
           </div>
 
@@ -97,7 +96,7 @@ export function CardsConfig({ config, onChange }: CardsConfigProps) {
           <div>
             <label className="block text-sm font-medium text-sc-text-dim">{t("cards.config.interval")}</label>
             <div className="mt-2">
-              <Stepper value={config.interval} min={1000} max={5000} step={1000} format={(v) => t("cards.config.intervalSec").replace("{val}", String(v / 1000))} onChange={(interval) => onChange({ ...config, interval })} ariaLabel={t("cards.config.interval")} />
+              <Stepper value={config.interval} min={100} max={15000} step={250} format={(v) => t("cards.config.intervalSec").replace("{val}", (v / 1000).toFixed(v % 1000 === 0 ? 0 : 1))} onChange={(interval) => onChange({ ...config, interval })} ariaLabel={t("cards.config.interval")} />
             </div>
           </div>
 

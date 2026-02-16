@@ -28,6 +28,7 @@ export function Game(props: Props) {
   const [error, setError] = useState(false);
   const [val, setVal] = useState("");
   const [firstAttempt, setFirstAttempt] = useState(true);
+  const [answerIndex, setAnswerIndex] = useState(0);
   const timerRef = useRef<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -84,6 +85,7 @@ export function Game(props: Props) {
       setError(false);
       setVal("");
       setFirstAttempt(true);
+      setAnswerIndex(0);
     }
     if (!props.play) {
       setIsPlaying(false);
@@ -146,19 +148,16 @@ export function Game(props: Props) {
       }, 50);
       return () => clearTimeout(id);
     }
-  }, [phase]);
+  }, [phase, answerIndex]);
 
   // Submit answer
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const currentRound = rounds[round];
-    const expected =
-      props.config.impulses === 1
-        ? currentRound[0]
-        : currentRound.reduce((sum, n) => sum + n, 0);
+    const expected = currentRound[answerIndex];
 
     if (Number(val) === expected) {
-      // Correct!
+      // Correct answer for this number
       const newScore: ScoreState = {
         correct: firstAttempt
           ? props.score.correct + 1
@@ -167,17 +166,28 @@ export function Game(props: Props) {
       };
       props.onScoreUpdate(newScore);
 
-      // Move to next round or complete
-      const nextRound = round + 1;
-      if (nextRound < rounds.length) {
-        setRound(nextRound);
-        setFlashIndex(0);
-        setShowAbacus(true);
-        setPhase("flashing");
-        setError(false);
+      const nextAnswerIndex = answerIndex + 1;
+      if (nextAnswerIndex < currentRound.length) {
+        // More numbers to answer in this round
+        setAnswerIndex(nextAnswerIndex);
         setVal("");
+        setError(false);
+        setFirstAttempt(true);
       } else {
-        setPhase("complete");
+        // All numbers in this round answered — move to next round or complete
+        const nextRound = round + 1;
+        if (nextRound < rounds.length) {
+          setRound(nextRound);
+          setAnswerIndex(0);
+          setFlashIndex(0);
+          setShowAbacus(true);
+          setPhase("flashing");
+          setError(false);
+          setVal("");
+          setFirstAttempt(true);
+        } else {
+          setPhase("complete");
+        }
       }
     } else {
       // Wrong
@@ -188,6 +198,7 @@ export function Game(props: Props) {
 
   // Anew: replay current round flashes
   function handleAnew() {
+    setAnswerIndex(0);
     setFlashIndex(0);
     setShowAbacus(true);
     setPhase("flashing");
@@ -197,6 +208,7 @@ export function Game(props: Props) {
 
   // Replay: same terms, reset rounds
   function handleReplay() {
+    setAnswerIndex(0);
     setRound(0);
     setFlashIndex(0);
     setShowAbacus(false);
@@ -263,6 +275,13 @@ export function Game(props: Props) {
           {/* ANSWERING phase */}
           {phase === "answering" && (
             <div className="text-sm font-[family-name:var(--font-chakra-petch)]">
+              {rounds[round] && rounds[round].length > 1 && (
+                <div className="text-center text-sc-text-dim mb-3 text-base">
+                  {t("cards.answerProgress")
+                    .replace("{current}", String(answerIndex + 1))
+                    .replace("{total}", String(rounds[round].length))}
+                </div>
+              )}
               <form onSubmit={handleSubmit}>
                 <input
                   ref={inputRef}

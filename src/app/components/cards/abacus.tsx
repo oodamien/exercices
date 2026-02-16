@@ -12,13 +12,9 @@ const BEAD_COLORS: Record<BeadColorScheme, { inactive: string; active: string }>
     inactive: "oklch(88.2% 0.059 254.128)",
     active: "oklch(70.7% 0.165 254.624)",
   },
-  black: {
-    inactive: "#888888",
-    active: "#222222",
-  },
-  white: {
-    inactive: "#e8e8e8",
-    active: "#bbbbbb",
+  standard: {
+    inactive: "oklch(78% 0.08 230)",
+    active: "oklch(82% 0.16 90)",
   },
 };
 

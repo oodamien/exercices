@@ -13,7 +13,7 @@ export default function Cards() {
   const [terms, setTerms] = useState<Array<number>>([]);
   const [score, setScore] = useState<ScoreState>({ correct: 0, total: 0 });
   const [config, setConfig] = useState<CardsConfigState>({
-    difficulty: 1,
+    level: 1,
     interval: 2000,
     impulses: 1,
     rotation: 0,

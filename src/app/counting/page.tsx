@@ -1,35 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { CountingConfigState, FlashCountingItem } from "@/app/types";
+import { CountingConfigState } from "@/app/types";
 import { Game } from "@/app/components/counting/game";
 import { CountingConfig } from "@/app/components/counting/counting-config";
-import { FLASH_COUNTING, FLASH_COUNTING_CATS } from "../Data";
+import { generateCountingTerms } from "@/app/generators";
 import { useTranslation } from "@/app/components/language-context";
-
-function generateGame(config: CountingConfigState) {
-  const values = FLASH_COUNTING.filter(
-    (value: FlashCountingItem) => value.level === +config.difficulty
-  );
-  const randomIndex = Math.floor(Math.random() * values.length);
-  const value = values[randomIndex];
-  const terms: Array<number> = [];
-  (["a", "b", "c", "d"] as Array<keyof typeof value>).forEach((key) => {
-    if (value && value.hasOwnProperty(key)) {
-      if (Number.isInteger(+value[key])) {
-        terms.push(+value[key]);
-      }
-    }
-  });
-  return terms;
-}
 
 export default function Counting() {
   const t = useTranslation();
   const [play, setPlay] = useState<boolean>(false);
   const [terms, setTerms] = useState<Array<number>>([]);
   const [config, setConfig] = useState<CountingConfigState>({
-    difficulty: "1",
+    difficulty: 1,
     interval: 2000,
     operation: "+",
     terms: 4,
@@ -54,7 +37,6 @@ export default function Counting() {
           <div className="w-full md:w-1/4">
             <CountingConfig
               config={config}
-              categories={FLASH_COUNTING_CATS}
               onChange={(state: CountingConfigState) => {
                 setConfig(state);
               }}
@@ -65,7 +47,7 @@ export default function Counting() {
               play={play}
               terms={terms}
               onPlay={() => {
-                setTerms(generateGame(config));
+                setTerms(generateCountingTerms(config));
                 setPlay(true);
               }}
               config={config}

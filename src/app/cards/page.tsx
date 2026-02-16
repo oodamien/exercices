@@ -1,29 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { CardsConfigState, ScoreState, CardItem } from "@/app/types";
+import { CardsConfigState, ScoreState } from "@/app/types";
 import { Game } from "@/app/components/cards/game";
 import { CardsConfig } from "@/app/components/cards/cards-config";
-import { CARDS, CARDS_CATS } from "../Data";
+import { generateCardsTerms } from "@/app/generators";
 import { useTranslation } from "@/app/components/language-context";
-
-function generateGame(config: CardsConfigState) {
-  const values = CARDS.filter(
-    (value: CardItem) => value.level === +config.difficulty
-  );
-  const randomIndex = Math.floor(Math.random() * values.length);
-  const value = values[randomIndex];
-  const terms: Array<number> = [];
-  Object.keys(value).forEach((key) => {
-    if (value && Object.prototype.hasOwnProperty.call(value, key)) {
-      const val: string | number = (value as CardItem)[key];
-      if (val !== "" && Number.isInteger(+val)) {
-        terms.push(+val);
-      }
-    }
-  });
-  return terms;
-}
 
 export default function Cards() {
   const t = useTranslation();
@@ -31,7 +13,7 @@ export default function Cards() {
   const [terms, setTerms] = useState<Array<number>>([]);
   const [score, setScore] = useState<ScoreState>({ correct: 0, total: 0 });
   const [config, setConfig] = useState<CardsConfigState>({
-    difficulty: "1",
+    difficulty: 1,
     interval: 2000,
     impulses: 1,
     rotation: 0,
@@ -52,7 +34,6 @@ export default function Cards() {
           <div className="w-full md:w-1/4">
             <CardsConfig
               config={config}
-              categories={CARDS_CATS}
               onChange={(state: CardsConfigState) => {
                 setConfig(state);
               }}
@@ -63,7 +44,7 @@ export default function Cards() {
               play={play}
               terms={terms}
               onPlay={() => {
-                setTerms(generateGame(config));
+                setTerms(generateCardsTerms(config));
                 setScore({ correct: 0, total: 0 });
                 setPlay(true);
               }}

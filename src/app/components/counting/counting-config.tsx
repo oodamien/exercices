@@ -5,7 +5,6 @@ import { useTranslation } from "@/app/components/language-context";
 
 interface CountingConfigProps {
   config: CountingConfigState;
-  categories: { level: number; name: string }[];
   onChange: (state: CountingConfigState) => void;
 }
 
@@ -45,7 +44,7 @@ function Stepper({
 
 const OPERATION_OPTIONS: CountingOperation[] = ["+", "-", "+-"];
 
-export function CountingConfig({ config, categories, onChange }: CountingConfigProps) {
+export function CountingConfig({ config, onChange }: CountingConfigProps) {
   const t = useTranslation();
 
   const operationLabelKey: Record<CountingOperation, string> = {
@@ -62,27 +61,21 @@ export function CountingConfig({ config, categories, onChange }: CountingConfigP
             📡 {t("config.title")}
           </h2>
 
-          {/* Difficulty dropdown */}
+          {/* Difficulty stepper */}
           <div>
-            <label htmlFor="counting-difficulty" className="block text-sm font-medium text-sc-text-dim">
+            <label className="block text-sm font-medium text-sc-text-dim">
               {t("counting.config.difficulty")}
             </label>
-            <div className="mt-2 grid grid-cols-1">
-              <select
-                id="counting-difficulty"
-                name="difficulty"
-                defaultValue={config.difficulty}
-                onChange={(e) => onChange({ ...config, difficulty: e.target.value })}
-                aria-label={t("counting.config.difficulty")}
-                className="col-start-1 row-start-1 w-full appearance-none rounded-lg bg-sc-bg-tertiary py-2 pr-8 pl-3 text-base text-sc-text border border-sc-cyan/20 focus:outline-2 focus:outline-sc-cyan"
-              >
-                {categories.map((cat) => (
-                  <option key={cat.level} value={cat.level}>{cat.name}</option>
-                ))}
-              </select>
-              <svg className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-sc-text-dim sm:size-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-              </svg>
+            <div className="mt-2">
+              <Stepper
+                value={config.difficulty}
+                min={1}
+                max={10}
+                step={1}
+                format={(v) => String(v)}
+                onChange={(difficulty) => onChange({ ...config, difficulty })}
+                ariaLabel={t("counting.config.difficulty")}
+              />
             </div>
           </div>
 

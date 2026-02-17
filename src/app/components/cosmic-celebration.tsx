@@ -41,8 +41,8 @@ function generateParticles(variant: "success" | "bravo"): {
     id: i,
     angle: (360 / count) * i + Math.random() * 20 - 10,
     distance: 60 + Math.random() * (variant === "bravo" ? 120 : 80),
-    delay: Math.random() * 0.3,
-    duration: 0.6 + Math.random() * 0.6,
+    delay: Math.random() * 0.5,
+    duration: 1.2 + Math.random() * 1.0,
     size: 4 + Math.random() * 8,
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
   }));
@@ -54,8 +54,8 @@ function generateParticles(variant: "success" | "bravo"): {
     angle: 20 + Math.random() * 30,
     tx: 100 + Math.random() * 100,
     ty: 60 + Math.random() * 60,
-    delay: Math.random() * 0.5,
-    duration: 0.5 + Math.random() * 0.4,
+    delay: Math.random() * 0.8,
+    duration: 1.0 + Math.random() * 0.8,
   }));
 
   return { particles, stars };
@@ -70,7 +70,7 @@ export function CosmicCelebration({ variant, trigger }: Props) {
   useEffect(() => {
     if (trigger <= 0) return;
     setData(generateParticles(variant));
-    const timeout = setTimeout(() => setData(null), 2000);
+    const timeout = setTimeout(() => setData(null), 3500);
     return () => clearTimeout(timeout);
   }, [trigger, variant]);
 

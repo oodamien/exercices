@@ -15,7 +15,7 @@ export function RocketTransition({ variant, trigger, onComplete }: Props) {
   useEffect(() => {
     if (trigger <= 0) return;
     setActive(true);
-    const duration = variant === "launch" ? 1200 : 800;
+    const duration = variant === "launch" ? 2500 : 2000;
     const timeout = setTimeout(() => {
       setActive(false);
       onComplete?.();

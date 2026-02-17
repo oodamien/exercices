@@ -302,8 +302,8 @@ body {
   50% { transform: scaleY(1.3) scaleX(0.8); }
 }
 
-.animate-rocket-launch { animation: rocket-launch 1.2s ease-in forwards; }
-.animate-rocket-flyby { animation: rocket-flyby 0.8s ease-in-out forwards; }
+.animate-rocket-launch { animation: rocket-launch 2.5s ease-in forwards; }
+.animate-rocket-flyby { animation: rocket-flyby 2s ease-in-out forwards; }
 .animate-flame { animation: flame-flicker 0.15s ease-in-out infinite; }
 
 /* Countdown animation */

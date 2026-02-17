@@ -4,6 +4,11 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { CardsConfigState, ScoreState } from "@/app/types";
 import AbacusGame from "./abacus";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
+import { useSoundEffects } from "@/app/hooks/use-sound-effects";
+import { CosmicCelebration } from "@/app/components/cosmic-celebration";
+import { RocketTransition } from "@/app/components/rocket-transition";
+import { AstronautMascot, type MascotMood } from "@/app/components/astronaut-mascot";
+import { Rocket } from "@/app/components/icons/rocket";
 
 type Phase = "ready" | "flashing" | "answering" | "success" | "complete";
 
@@ -19,8 +24,13 @@ interface Props {
 export function Game(props: Props) {
   const { language } = useLanguage();
   const t = useTranslation();
+  const sfx = useSoundEffects();
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [rocketTrigger, setRocketTrigger] = useState(0);
+  const [rocketVariant, setRocketVariant] = useState<"launch" | "flyby">("launch");
+  const [mascotMood, setMascotMood] = useState<MascotMood>("thinking");
   const [phase, setPhase] = useState<Phase>("ready");
   const [round, setRound] = useState(0);
   const [flashIndex, setFlashIndex] = useState(0);
@@ -86,6 +96,10 @@ export function Game(props: Props) {
       setVal("");
       setFirstAttempt(true);
       setAnswerIndex(0);
+      setMascotMood("thinking");
+      sfx.playStart();
+      setRocketVariant("launch");
+      setRocketTrigger((t) => t + 1);
     }
     if (!props.play) {
       setIsPlaying(false);
@@ -165,11 +179,16 @@ export function Game(props: Props) {
         total: props.score.total + 1,
       };
       props.onScoreUpdate(newScore);
+      sfx.playSuccess();
+      setCelebrationTrigger((t) => t + 1);
+      setMascotMood("happy");
       setPhase("success");
     } else {
       // Wrong
       setError(true);
       setFirstAttempt(false);
+      sfx.playError();
+      setMascotMood("sad");
     }
   }
 
@@ -196,8 +215,17 @@ export function Game(props: Props) {
         setError(false);
         setVal("");
         setFirstAttempt(true);
+        setMascotMood("thinking");
+        sfx.playTransition();
+        setRocketVariant("flyby");
+        setRocketTrigger((t) => t + 1);
       } else {
         setPhase("complete");
+        sfx.playBravo();
+        setMascotMood("cheering");
+        setRocketVariant("launch");
+        setRocketTrigger((t) => t + 1);
+        setCelebrationTrigger((t) => t + 1);
       }
     }
   }
@@ -210,6 +238,7 @@ export function Game(props: Props) {
     setPhase("flashing");
     setError(false);
     setVal("");
+    setMascotMood("thinking");
   }
 
   // Replay: same terms, reset rounds
@@ -247,22 +276,27 @@ export function Game(props: Props) {
 
       {/* IDLE: New Game button */}
       {!isPlaying && (
-        <button
-          onClick={() => props.onPlay()}
-          type="button"
-          className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
-        >
-          {t("game.newGame")}
-        </button>
+        <div className="animate-fade-in">
+          <button
+            onClick={() => props.onPlay()}
+            type="button"
+            className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
+          >
+            <Rocket className="w-5 h-5 inline-block mr-1" />
+            {t("game.newGame")}
+          </button>
+        </div>
       )}
 
       {isPlaying && (
         <>
           {/* READY phase */}
           {phase === "ready" && (
-            <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
-              {t("game.ready")}
-            </p>
+            <div className="animate-fade-in">
+              <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
+                {t("game.ready")}
+              </p>
+            </div>
           )}
 
           {/* FLASHING phase */}
@@ -278,9 +312,16 @@ export function Game(props: Props) {
             </>
           )}
 
+          {/* Mascot — visible during answering */}
+          {phase === "answering" && (
+            <div className="absolute bottom-3 right-3 z-10">
+              <AstronautMascot mood={mascotMood} className="w-16 h-16" />
+            </div>
+          )}
+
           {/* ANSWERING phase */}
           {phase === "answering" && (
-            <div className="text-sm font-[family-name:var(--font-chakra-petch)]">
+            <div className="text-sm font-[family-name:var(--font-chakra-petch)] animate-fade-in">
               {rounds[round] && rounds[round].length > 1 && (
                 <div className="text-center text-sc-text-dim mb-3 text-base">
                   {t("cards.answerProgress")
@@ -303,7 +344,7 @@ export function Game(props: Props) {
                   className="block w-full rounded-lg bg-sc-bg-tertiary px-3 py-2 text-base text-sc-text border border-sc-orange/20 placeholder:text-sc-text-dim/50 focus:outline-2 focus:outline-sc-orange sm:text-sm"
                 />
                 {error && (
-                  <div className="pt-2 text-sc-red">
+                  <div className="pt-2 text-sc-red animate-shake">
                     {t("cards.tryAgain")}
                   </div>
                 )}
@@ -329,6 +370,7 @@ export function Game(props: Props) {
           {/* SUCCESS phase */}
           {phase === "success" && (
             <div className="block text-center animate-bounce-in">
+              <AstronautMascot mood="happy" className="w-16 h-16 mx-auto" />
               <div className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
                 {t("cards.success")}
               </div>
@@ -338,6 +380,7 @@ export function Game(props: Props) {
                   type="button"
                   className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
+                  <Rocket className="w-5 h-5 inline-block mr-1" />
                   {t("cards.next")}
                 </button>
               </div>
@@ -347,6 +390,7 @@ export function Game(props: Props) {
           {/* COMPLETE phase */}
           {phase === "complete" && (
             <div className="block text-center animate-bounce-in">
+              <AstronautMascot mood="cheering" className="w-20 h-20 mx-auto" />
               <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
                 {t("cards.bravo")}
               </div>
@@ -369,6 +413,7 @@ export function Game(props: Props) {
                   type="button"
                   className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                 >
+                  <Rocket className="w-5 h-5 inline-block mr-1" />
                   {t("game.newGameShort")}
                 </button>
               </div>
@@ -376,6 +421,13 @@ export function Game(props: Props) {
           )}
         </>
       )}
+
+      {/* Overlay effects */}
+      <CosmicCelebration
+        variant={phase === "complete" ? "bravo" : "success"}
+        trigger={celebrationTrigger}
+      />
+      <RocketTransition variant={rocketVariant} trigger={rocketTrigger} />
     </div>
   );
 }

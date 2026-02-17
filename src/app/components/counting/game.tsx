@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { CountingConfigState } from "@/app/types";
 import { ClassTimer } from "../timer";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
+import { useSoundEffects } from "@/app/hooks/use-sound-effects";
+import { CosmicCelebration } from "@/app/components/cosmic-celebration";
+import { RocketTransition } from "@/app/components/rocket-transition";
+import { AstronautMascot } from "@/app/components/astronaut-mascot";
+import { Rocket } from "@/app/components/icons/rocket";
 
 interface Props {
   play: boolean;
@@ -15,7 +20,10 @@ interface Props {
 export function Game(props: Props) {
   const { language } = useLanguage();
   const t = useTranslation();
+  const sfx = useSoundEffects();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [rocketTrigger, setRocketTrigger] = useState(0);
   const [tick, setTick] = useState<number>(-1);
   const [result, setResult] = useState<number>(0);
   const [blink, setBlink] = useState<boolean>(false);
@@ -95,9 +103,19 @@ export function Game(props: Props) {
     }
   }, [tick, props.terms, props.play]);
 
+  // Trigger celebration on result reveal
+  useEffect(() => {
+    if (tick === props.terms.length + 1) {
+      setCelebrationTrigger((t) => t + 1);
+      sfx.playBravo();
+    }
+  }, [tick, props.terms.length, sfx]);
+
   useEffect(() => {
     if (props.play && !isPlaying) {
       setIsPlaying(true);
+      sfx.playStart();
+      setRocketTrigger((t) => t + 1);
       next();
     }
   }, [props.play, isPlaying]);
@@ -113,15 +131,18 @@ export function Game(props: Props) {
       } media h-full relative w-full bg-transparent flex justify-center items-center`}
     >
       {!isPlaying && (
-        <button
-          onClick={() => {
-            props.onPlay();
-          }}
-          type="submit"
-          className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
-        >
-          {t("game.newGame")}
-        </button>
+        <div className="animate-fade-in">
+          <button
+            onClick={() => {
+              props.onPlay();
+            }}
+            type="submit"
+            className="rounded-xl bg-sc-gold px-8 py-4 text-lg font-bold text-sc-bg-primary shadow-lg hover:bg-sc-gold/90 hover:scale-105 transition-all duration-200 cursor-pointer"
+          >
+            <Rocket className="w-5 h-5 inline-block mr-1" />
+            {t("game.newGame")}
+          </button>
+        </div>
       )}
       {isPlaying && (
         <>
@@ -165,6 +186,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer ml-4"
                     >
+                      <Rocket className="w-5 h-5 inline-block mr-1" />
                       {t("game.newGameShort")}
                     </button>
                   </>
@@ -173,21 +195,23 @@ export function Game(props: Props) {
             </div>
           )}
           {tick === -1 && (
-            <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
-              {t("game.ready")}
-            </p>
+            <div className="animate-fade-in">
+              <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
+                {t("game.ready")}
+              </p>
+            </div>
           )}
           {!blink && (
             <>
               {tick > -1 && (
-                <div>
+                <div key={tick} className="animate-fade-in">
                   {tick > -1 && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text animate-number-in animate-hologram">
                       {props.terms[tick]}
                     </div>
                   )}
                   {tick === props.terms.length && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text animate-number-in animate-hologram">
                       ?
                     </div>
                   )}
@@ -195,6 +219,7 @@ export function Game(props: Props) {
               )}
               {tick === props.terms.length + 1 && (
                 <div className="flex justify-center items-center flex-col animate-bounce-in">
+                  <AstronautMascot mood="cheering" className="w-20 h-20" />
                   <div className="text-xl text-sc-text-dim">{props.terms.join(" + ")}</div>
                   <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
                     {result}
@@ -221,6 +246,7 @@ export function Game(props: Props) {
                       type="submit"
                       className="rounded-xl bg-sc-orange/20 px-6 py-3 text-base font-bold text-sc-orange border border-sc-orange/30 shadow-lg hover:bg-sc-orange/30 hover:scale-105 transition-all duration-200 cursor-pointer"
                     >
+                      <Rocket className="w-5 h-5 inline-block mr-1" />
                       {t("game.newGameShort")}
                     </button>
                   </div>
@@ -230,6 +256,8 @@ export function Game(props: Props) {
           )}
         </>
       )}
+      <CosmicCelebration variant="bravo" trigger={celebrationTrigger} />
+      <RocketTransition variant="launch" trigger={rocketTrigger} />
     </div>
   );
 }

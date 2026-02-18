@@ -12,7 +12,7 @@ export function AstronautMascot({ mood, className = "" }: Props) {
     <div
       className={`transition-all duration-500 ${
         mood === "thinking"
-          ? "animate-float"
+          ? "animate-float animate-breathe"
           : mood === "sad"
           ? "animate-shake"
           : mood === "cheering"
@@ -24,8 +24,10 @@ export function AstronautMascot({ mood, className = "" }: Props) {
         {/* Helmet */}
         <circle cx="100" cy="75" r="45" fill="#E8EDF5" stroke="#8B9EC7" strokeWidth="3" />
         <circle cx="100" cy="75" r="38" fill="#1A2744" />
-        {/* Visor reflection */}
-        <ellipse cx="88" cy="68" rx="12" ry="8" fill="rgba(0,212,255,0.3)" transform="rotate(-15 88 68)" />
+        {/* Visor reflection - dynamic color per mood */}
+        <ellipse cx="88" cy="68" rx="12" ry="8" fill={
+          mood === "happy" || mood === "cheering" ? "rgba(255,215,0,0.25)" : mood === "sad" ? "rgba(139,158,199,0.15)" : "rgba(0,212,255,0.3)"
+        } transform="rotate(-15 88 68)" />
         {/* Visor fog for sad mood */}
         {mood === "sad" && (
           <ellipse cx="100" cy="85" rx="30" ry="10" fill="rgba(139,158,199,0.2)" />
@@ -134,9 +136,18 @@ export function AstronautMascot({ mood, className = "" }: Props) {
         )}
         {mood === "cheering" && (
           <>
-            <text x="35" y="85" fontSize="12" fill="#FF8C42">&#9733;</text>
-            <text x="160" y="75" fontSize="11" fill="#22D17B">&#9733;</text>
-            <text x="30" y="65" fontSize="9" fill="#E8EDF5">&#9733;</text>
+            <text x="35" y="85" fontSize="12" fill="#FF8C42" opacity="0.9">
+              <animateTransform attributeName="transform" type="translate" values="0,0;0,-8;0,0" dur="1.5s" repeatCount="indefinite" begin="0s" />
+              &#9733;
+            </text>
+            <text x="160" y="75" fontSize="11" fill="#22D17B" opacity="0.8">
+              <animateTransform attributeName="transform" type="translate" values="0,0;0,-6;0,0" dur="1.8s" repeatCount="indefinite" begin="0.3s" />
+              &#9733;
+            </text>
+            <text x="30" y="65" fontSize="9" fill="#E8EDF5" opacity="0.7">
+              <animateTransform attributeName="transform" type="translate" values="0,0;0,-10;0,0" dur="2s" repeatCount="indefinite" begin="0.6s" />
+              &#9733;
+            </text>
           </>
         )}
       </svg>

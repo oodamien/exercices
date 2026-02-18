@@ -15,6 +15,7 @@ interface Particle {
   duration: number;
   size: number;
   color: string;
+  isStar: boolean;
 }
 
 interface ShootingStar {
@@ -34,17 +35,18 @@ function generateParticles(variant: "success" | "bravo"): {
   particles: Particle[];
   stars: ShootingStar[];
 } {
-  const count = variant === "bravo" ? 20 : 10;
+  const count = variant === "bravo" ? 30 : 10;
   const starCount = variant === "bravo" ? 5 : 2;
 
   const particles: Particle[] = Array.from({ length: count }, (_, i) => ({
     id: i,
     angle: (360 / count) * i + Math.random() * 20 - 10,
-    distance: 60 + Math.random() * (variant === "bravo" ? 120 : 80),
+    distance: 60 + Math.random() * (variant === "bravo" ? 140 : 80),
     delay: Math.random() * 0.5,
     duration: 1.2 + Math.random() * 1.0,
     size: 4 + Math.random() * 8,
     color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    isStar: i % 5 === 0, // every 5th particle is a star shape
   }));
 
   const stars: ShootingStar[] = Array.from({ length: starCount }, (_, i) => ({
@@ -78,11 +80,46 @@ export function CosmicCelebration({ variant, trigger }: Props) {
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
+      {/* Screen flash for bravo */}
+      {variant === "bravo" && (
+        <div className="absolute inset-0 bg-sc-gold/[0.08] animate-screen-flash" />
+      )}
+
+      {/* Golden ring burst for bravo */}
+      {variant === "bravo" && (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-2 border-sc-gold animate-golden-burst" />
+      )}
+
       {/* Burst particles from center */}
       {data.particles.map((p) => {
         const rad = (p.angle * Math.PI) / 180;
         const tx = Math.cos(rad) * p.distance;
         const ty = Math.sin(rad) * p.distance;
+
+        if (p.isStar) {
+          return (
+            <svg
+              key={`p-${p.id}`}
+              className="absolute left-1/2 top-1/2 animate-particle"
+              width={p.size * 2}
+              height={p.size * 2}
+              viewBox="0 0 24 24"
+              style={{
+                "--tx": `${tx}px`,
+                "--ty": `${ty}px`,
+                "--delay": `${p.delay}s`,
+                "--duration": `${p.duration}s`,
+                filter: `drop-shadow(0 0 ${p.size}px ${p.color})`,
+              } as React.CSSProperties}
+            >
+              <polygon
+                points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                fill={p.color}
+              />
+            </svg>
+          );
+        }
+
         return (
           <span
             key={`p-${p.id}`}

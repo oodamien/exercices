@@ -28,7 +28,7 @@ function Stepper({
       <button
         type="button"
         onClick={decrement}
-        className="w-8 h-8 rounded-full bg-sc-bg-tertiary text-sc-orange hover:bg-sc-orange/20 border border-sc-orange/20 flex items-center justify-center text-sm font-bold cursor-pointer transition-colors"
+        className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-sc-bg-tertiary text-sc-orange hover:bg-sc-orange/20 border border-sc-orange/20 flex items-center justify-center text-sm font-bold cursor-pointer transition-all hover:scale-110"
         aria-label={`${ariaLabel} decrease`}
       >
         ◀
@@ -39,7 +39,7 @@ function Stepper({
       <button
         type="button"
         onClick={increment}
-        className="w-8 h-8 rounded-full bg-sc-bg-tertiary text-sc-orange hover:bg-sc-orange/20 border border-sc-orange/20 flex items-center justify-center text-sm font-bold cursor-pointer transition-colors"
+        className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-sc-bg-tertiary text-sc-orange hover:bg-sc-orange/20 border border-sc-orange/20 flex items-center justify-center text-sm font-bold cursor-pointer transition-all hover:scale-110"
         aria-label={`${ariaLabel} increase`}
       >
         ▶
@@ -59,11 +59,13 @@ export function CardsConfig({ config, onChange }: CardsConfigProps) {
   };
 
   return (
-    <div className="bg-sc-bg-secondary rounded-2xl p-5 border border-sc-orange/10">
+    <div className="glass-panel rounded-2xl p-5">
+      <div className="h-[2px] bg-gradient-to-r from-transparent via-sc-orange/50 to-transparent mb-4 rounded-full" />
       <form>
         <div className="space-y-4">
-          <h2 className="text-lg font-[family-name:var(--font-fredoka)] text-sc-text flex items-center gap-2">
-            📡 {t("config.title")}
+          <h2 className="text-xl font-[family-name:var(--font-fredoka)] text-sc-text flex items-center gap-2">
+            <span className="inline-block w-2 h-2 rounded-full bg-sc-orange animate-led-blink" />
+            {t("config.title")}
           </h2>
 
           {/* Level stepper */}

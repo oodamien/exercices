@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Nav } from "@/app/components/nav";
 import { LanguageProvider, LanguageSelector } from "@/app/components/language-context";
 import { Rocket } from "@/app/components/icons/rocket";
+import { Comet } from "@/app/components/comet";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,14 +19,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="stars-sparkle" />
         </div>
 
+        {/* Periodic comet */}
+        <Comet />
+
         {/* Nav */}
-        <nav className="relative z-10 border-b border-sc-cyan/10">
+        <nav className="relative z-10 border-b border-sc-cyan/10 backdrop-blur-md bg-sc-bg-primary/80">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between">
               <div className="flex items-center">
                 <Link href="/" className="flex items-center gap-2 group">
                   <Rocket className="w-7 h-7 group-hover:animate-float" />
-                  <span className="font-[family-name:var(--font-fredoka)] text-xl font-bold text-sc-gold text-glow-gold">
+                  <span className="font-[family-name:var(--font-fredoka)] text-xl font-bold text-gradient-gold">
                     StarCalc
                   </span>
                 </Link>
@@ -67,8 +71,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )}
         </nav>
 
-        {/* Main content */}
-        <div className="relative z-10">
+        {/* Main content with entrance animation */}
+        <div className="relative z-10 animate-fade-in">
           {children}
         </div>
       </div>

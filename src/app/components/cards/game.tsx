@@ -29,7 +29,6 @@ export function Game(props: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [rocketTrigger, setRocketTrigger] = useState(0);
-  const [rocketVariant, setRocketVariant] = useState<"launch" | "flyby">("launch");
   const [mascotMood, setMascotMood] = useState<MascotMood>("thinking");
   const [phase, setPhase] = useState<Phase>("ready");
   const [round, setRound] = useState(0);
@@ -98,7 +97,6 @@ export function Game(props: Props) {
       setAnswerIndex(0);
       setMascotMood("thinking");
       sfx.playStart();
-      setRocketVariant("launch");
       setRocketTrigger((t) => t + 1);
     }
     if (!props.play) {
@@ -217,13 +215,11 @@ export function Game(props: Props) {
         setFirstAttempt(true);
         setMascotMood("thinking");
         sfx.playTransition();
-        setRocketVariant("flyby");
         setRocketTrigger((t) => t + 1);
       } else {
         setPhase("complete");
         sfx.playBravo();
         setMascotMood("cheering");
-        setRocketVariant("launch");
         setRocketTrigger((t) => t + 1);
         setCelebrationTrigger((t) => t + 1);
       }
@@ -264,7 +260,7 @@ export function Game(props: Props) {
     <div className="play media h-full relative w-full bg-transparent flex justify-center items-center rounded-2xl">
       {/* Score overlay */}
       {isPlaying && (
-        <div className="absolute top-3 right-3 bg-sc-bg-secondary/80 backdrop-blur-sm rounded-lg px-3 py-1.5 text-sm font-semibold text-sc-text">
+        <div className="absolute top-3 right-3 glass-panel rounded-full px-4 py-2 text-sm font-semibold text-sc-text">
           {t("cards.score")}: {props.score.correct}/{props.score.total}
           {props.score.total > 0 && (
             <span className="ml-1 text-sc-text-dim">
@@ -293,7 +289,7 @@ export function Game(props: Props) {
           {/* READY phase */}
           {phase === "ready" && (
             <div className="animate-fade-in">
-              <p className="text-6xl font-[family-name:var(--font-chakra-petch)]">
+              <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-orange animate-neon-glow">
                 {t("game.ready")}
               </p>
             </div>
@@ -341,7 +337,7 @@ export function Game(props: Props) {
                   autoFocus
                   onChange={(e) => setVal(e.target.value)}
                   value={val}
-                  className="block w-full rounded-lg bg-sc-bg-tertiary px-3 py-2 text-base text-sc-text border border-sc-orange/20 placeholder:text-sc-text-dim/50 focus:outline-2 focus:outline-sc-orange sm:text-sm"
+                  className="block w-full rounded-xl glass-panel px-5 py-4 text-2xl text-center text-sc-text border border-sc-orange/20 placeholder:text-sc-text-dim/50 focus:outline-none focus:ring-2 focus:ring-sc-orange focus:shadow-[0_0_20px_rgba(255,140,66,0.3)]"
                 />
                 {error && (
                   <div className="pt-2 text-sc-red animate-shake">
@@ -370,8 +366,8 @@ export function Game(props: Props) {
           {/* SUCCESS phase */}
           {phase === "success" && (
             <div className="block text-center animate-bounce-in">
-              <AstronautMascot mood="happy" className="w-16 h-16 mx-auto" />
-              <div className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
+              <AstronautMascot mood="happy" className="w-20 h-20 mx-auto animate-breathe" />
+              <div className="text-6xl font-[family-name:var(--font-chakra-petch)] text-gradient-gold">
                 {t("cards.success")}
               </div>
               <div className="pt-6">
@@ -390,8 +386,8 @@ export function Game(props: Props) {
           {/* COMPLETE phase */}
           {phase === "complete" && (
             <div className="block text-center animate-bounce-in">
-              <AstronautMascot mood="cheering" className="w-20 h-20 mx-auto" />
-              <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
+              <AstronautMascot mood="cheering" className="w-28 h-28 mx-auto animate-breathe" />
+              <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-gradient-gold animate-golden-burst rounded-2xl">
                 {t("cards.bravo")}
               </div>
               <div className="text-xl pt-2 text-sc-text">
@@ -427,7 +423,7 @@ export function Game(props: Props) {
         variant={phase === "complete" ? "bravo" : "success"}
         trigger={celebrationTrigger}
       />
-      <RocketTransition variant={rocketVariant} trigger={rocketTrigger} />
+      <RocketTransition trigger={rocketTrigger} />
     </div>
   );
 }

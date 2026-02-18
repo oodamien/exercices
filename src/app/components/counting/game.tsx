@@ -196,7 +196,7 @@ export function Game(props: Props) {
           )}
           {tick === -1 && (
             <div className="animate-fade-in">
-              <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-text">
+              <p className="text-6xl font-[family-name:var(--font-chakra-petch)] text-sc-cyan animate-neon-glow">
                 {t("game.ready")}
               </p>
             </div>
@@ -206,12 +206,12 @@ export function Game(props: Props) {
               {tick > -1 && (
                 <div key={tick} className="animate-fade-in">
                   {tick > -1 && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text animate-number-in animate-hologram">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text animate-number-reveal animate-hologram">
                       {props.terms[tick]}
                     </div>
                   )}
                   {tick === props.terms.length && (
-                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-text animate-number-in animate-hologram">
+                    <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-gradient-cyan animate-float">
                       ?
                     </div>
                   )}
@@ -219,9 +219,9 @@ export function Game(props: Props) {
               )}
               {tick === props.terms.length + 1 && (
                 <div className="flex justify-center items-center flex-col animate-bounce-in">
-                  <AstronautMascot mood="cheering" className="w-20 h-20" />
+                  <AstronautMascot mood="cheering" className="w-24 h-24 animate-breathe" />
                   <div className="text-xl text-sc-text-dim">{props.terms.join(" + ")}</div>
-                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-sc-gold">
+                  <div className="text-9xl font-[family-name:var(--font-chakra-petch)] text-gradient-gold animate-golden-burst rounded-2xl">
                     {result}
                   </div>
                   <div className="flex gap-4 pt-6">

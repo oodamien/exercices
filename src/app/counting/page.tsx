@@ -6,6 +6,7 @@ import { Game } from "@/app/components/counting/game";
 import { CountingConfig } from "@/app/components/counting/counting-config";
 import { generateCountingTerms } from "@/app/generators";
 import { useTranslation } from "@/app/components/language-context";
+import { PlanetCounting } from "@/app/components/icons/planet-counting";
 
 export default function Counting() {
   const t = useTranslation();
@@ -25,14 +26,15 @@ export default function Counting() {
 
   return (
     <>
-      <header className="border-b border-sc-cyan/10">
+      <header className="border-b border-sc-cyan/10 animate-slide-up">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="font-[family-name:var(--font-fredoka)] text-3xl font-bold text-sc-cyan text-glow-cyan">
-            ⚡ {t("page.counting.title")}
+          <h1 className="font-[family-name:var(--font-fredoka)] text-4xl font-bold text-gradient-cyan flex items-center gap-3">
+            <PlanetCounting className="w-9 h-9" />
+            {t("page.counting.title")}
           </h1>
         </div>
       </header>
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 animate-slide-up-delay-1">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/4">
             <CountingConfig

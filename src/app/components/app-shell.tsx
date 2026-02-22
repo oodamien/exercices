@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Nav } from "@/app/components/nav";
 import { LanguageProvider, LanguageSelector } from "@/app/components/language-context";
 import { Rocket } from "@/app/components/icons/rocket";
-import { Comet } from "@/app/components/comet";
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,14 +13,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
       <div className="min-h-screen relative">
-        {/* Starfield background — 4 layers of stars */}
-        <div className="starfield">
-          <div className="stars-bright" />
-          <div className="stars-sparkle" />
-        </div>
-
-        {/* Periodic comet */}
-        <Comet />
+        {/* Static starfield background */}
+        <div className="starfield" />
 
         {/* Nav */}
         <nav className="relative z-10 border-b border-sc-cyan/10 backdrop-blur-md bg-sc-bg-primary/80">

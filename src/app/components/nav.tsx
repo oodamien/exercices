@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/app/components/language-context";
-import { HomeIcon, LightningIcon, PlanetIcon } from "@/app/components/icons/nav-icons";
+import { HomeIcon, PlanetIcon } from "@/app/components/icons/nav-icons";
 
 interface Props {
   mobile?: boolean;
@@ -15,7 +15,6 @@ export function Nav({ mobile }: Props) {
 
   const links = [
     { href: "/", label: t("nav.home"), Icon: HomeIcon },
-    { href: "/counting", label: t("nav.counting"), Icon: LightningIcon },
     { href: "/cards", label: t("nav.cards"), Icon: PlanetIcon },
   ];
 

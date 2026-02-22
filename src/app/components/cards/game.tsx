@@ -6,7 +6,6 @@ import AbacusGame from "./abacus";
 import { useLanguage, useTranslation } from "@/app/components/language-context";
 import { useSoundEffects } from "@/app/hooks/use-sound-effects";
 import { CosmicCelebration } from "@/app/components/cosmic-celebration";
-import { RocketTransition } from "@/app/components/rocket-transition";
 import { AstronautMascot, type MascotMood } from "@/app/components/astronaut-mascot";
 import { Rocket } from "@/app/components/icons/rocket";
 
@@ -28,7 +27,6 @@ export function Game(props: Props) {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
-  const [rocketTrigger, setRocketTrigger] = useState(0);
   const [mascotMood, setMascotMood] = useState<MascotMood>("thinking");
   const [phase, setPhase] = useState<Phase>("ready");
   const [round, setRound] = useState(0);
@@ -97,7 +95,6 @@ export function Game(props: Props) {
       setAnswerIndex(0);
       setMascotMood("thinking");
       sfx.playStart();
-      setRocketTrigger((t) => t + 1);
     }
     if (!props.play) {
       setIsPlaying(false);
@@ -215,13 +212,11 @@ export function Game(props: Props) {
         setFirstAttempt(true);
         setMascotMood("thinking");
         sfx.playTransition();
-        setRocketTrigger((t) => t + 1);
-      } else {
+        } else {
         setPhase("complete");
         sfx.playBravo();
         setMascotMood("cheering");
-        setRocketTrigger((t) => t + 1);
-        setCelebrationTrigger((t) => t + 1);
+          setCelebrationTrigger((t) => t + 1);
       }
     }
   }
@@ -423,7 +418,6 @@ export function Game(props: Props) {
         variant={phase === "complete" ? "bravo" : "success"}
         trigger={celebrationTrigger}
       />
-      <RocketTransition trigger={rocketTrigger} />
     </div>
   );
 }
